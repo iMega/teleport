@@ -1,0 +1,25 @@
+{
+  "name": "iMega/Teleport",
+  "description": "Import your products from your 1C to your eShop.",
+  "keywords": ["database"],
+  "minimum-stability": "stable",
+  "authors": [
+    {
+      "name": "Dmitry gavriloff",
+      "email": "info@imega.ru"
+    }
+  ],
+  "autoload": {
+    "psr-4": {"iMega\\Teleport\\": "src/iMega/Teleport"}
+  },
+  "require": {
+    "silex/silex": "2.0.*@dev",
+    "iMega/WalkerXML": "1.0.0"
+  },
+  "repositories":[
+    {
+      "type":"git",
+      "url":"https://github.com/iMega/WalkerXML.git"
+    }
+  ]
+}

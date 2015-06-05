@@ -16,6 +16,10 @@
     "silex/silex": "2.0.*@dev",
     "iMega/WalkerXML": "1.0.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0",
+    "knplabs/gaufrette": "v0.1.9"
+  },
   "repositories":[
     {
       "type":"git",

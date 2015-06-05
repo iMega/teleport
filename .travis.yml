@@ -10,4 +10,5 @@ before_script:
   - composer dumpautoload
 
 script:
-  - vendor/bin/phpunit
+  - mkdir -p build/logs
+  - vendor/bin/phpunit --coverage-clover build/logs/clover.xml --log-json build/logs/junit.json

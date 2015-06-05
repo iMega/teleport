@@ -13,6 +13,7 @@
     "psr-4": {"iMega\\Teleport\\": "src/iMega/Teleport"}
   },
   "require": {
+    "php": ">=5.5.9",
     "silex/silex": "2.0.*@dev",
     "iMega/WalkerXML": "1.0.0"
   },

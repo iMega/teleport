@@ -1,4 +1,4 @@
-# iMega Teleport
+# iMega Teleport 2
 
 [![Build Status](https://travis-ci.org/iMega/teleport.svg?branch=master)](https://travis-ci.org/iMega/teleport)
 [![Circle Build Status](https://circleci.com/gh/iMega/teleport.svg?style=shield)](https://circleci.com/gh/iMega/teleport)

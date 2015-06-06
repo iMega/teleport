@@ -20,6 +20,9 @@ start:
 		hub.nethouse.ru/nethouse/nginx
 
 test:
-	@docker run --rm -v `pwd`:/data imega/phptest vendor/bin/phpunit
+	@docker run --rm -v `pwd`:/data imega/phptest vendor/bin/phpunit --debug
 
-.PHONY: build start test
+x:
+	@docker run --rm -v `pwd`:/data imega/phptest php test.php
+
+.PHONY: build start test x

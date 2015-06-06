@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/iMega/teleport.svg?branch=master)](https://travis-ci.org/iMega/teleport)
 [![Circle Build Status](https://circleci.com/gh/iMega/teleport.svg?style=shield)](https://circleci.com/gh/iMega/teleport)
-[![Coverage Status](https://coveralls.io/repos/iMega/teleport/badge.svg)](https://coveralls.io/r/iMega/teleport)
+[![Code Coverage](https://scrutinizer-ci.com/g/iMega/teleport/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/iMega/teleport/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/iMega/teleport/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/iMega/teleport/?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/5571ecfd393530001c000001/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5571ecfd393530001c000001)
 

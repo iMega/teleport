@@ -63,7 +63,7 @@ class Stock
             Description::GROUP
         );
 
-        if ($groups) {
+        if (null !== $groups) {
             $this->createGroups($groups);
         }
 
@@ -73,7 +73,7 @@ class Stock
             Description::PROPERTIES,
             Description::PROPERY
         );
-        if (is_array($properties)) {
+        if (null !== $properties) {
             $this->createProperties($properties);
         }
 
@@ -144,31 +144,15 @@ class Stock
      */
     private function createGroups($groups, $parent = '')
     {
-        if (! is_array($groups)) {
-            $id = $this->createGroup($groups, $parent);
-
-            $subGroup = $this->xml->deepElement(
-                $groups,
-                Description::GROUPS,
-                Description::GROUP
-            );
-
-            if (is_array($subGroup)) {
-                $this->createGroups($subGroup, $id);
-            }
-            return;
-        }
-
         foreach ($groups as $group) {
             $id = $this->createGroup($group, $parent);
 
             $subGroup = $this->xml->deepElement(
                 $group,
-                Description::GROUPS,
-                Description::GROUP
+                Description::GROUPS
             );
 
-            if (is_array($subGroup)) {
+            if (null !== $subGroup) {
                 $this->createGroups($subGroup, $id);
             }
         }
@@ -396,9 +380,9 @@ class Stock
     /**
      * Send event
      *
-     * @param array $data
+     * @param array $data Data of record.
      */
-    public function event($data)
+    public function event(array $data)
     {
         $this->dispatcher->dispatch(
             'buffer.parse.stock',
@@ -407,13 +391,12 @@ class Stock
     }
 
     /**
-     * @param $data
+     * @param array $data The data being encoded.
      *
      * @return string
      */
-    private function json($data)
+    private function json(array $data)
     {
-        //JSON_UNESCAPED_UNICODE
         return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 }

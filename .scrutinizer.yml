@@ -1,0 +1,8 @@
+build:
+    tests:
+        override:
+            -
+                command: 'phpunit'
+                coverage:
+                    file: './phpunit.xml.dist'
+                    format: 'php-clover'

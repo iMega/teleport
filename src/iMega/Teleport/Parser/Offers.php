@@ -24,6 +24,8 @@ use iMega\Teleport\StringsTools;
 
 class Offers
 {
+    use Attribute;
+
     const KEY_SETS   = 40,
         KEY_OFFERS   = 50,
         KEY_FEATURES = 60,
@@ -54,7 +56,7 @@ class Offers
      */
     public function parse()
     {
-        $this->attrChanges();
+        $this->attrChanges(Description::PACKAGEOFFERS);
 
         $offers = $this->xml->elements(
             Description::PACKAGEOFFERS,
@@ -62,22 +64,6 @@ class Offers
             Description::OFFER
         );
         $this->createOffers($offers);
-    }
-
-    /**
-     * Аттрибут предложений "Содержит только изменения"
-     */
-    private function attrChanges()
-    {
-        $offers = $this->xml->elements(
-            Description::PACKAGEOFFERS
-        );
-        $attrs = $offers[0]->attribute();
-
-        $this->event([
-            'entityType' => self::KEY_SETS,
-            'changes'    => isset($attrs[Description::CONTAINS_ONLY_THE_CHANGES]),
-        ]);
     }
 
     /**

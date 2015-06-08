@@ -27,6 +27,8 @@ use iMega\Teleport\StringsTools;
  */
 class Stock
 {
+    use Attribute;
+
     const KEY_GROUPS = 1,
         KEY_PROP     = 10,
         KEY_PROD     = 20,
@@ -58,7 +60,7 @@ class Stock
      */
     public function parse()
     {
-        $this->attrChanges();
+        $this->attrChanges(Description::CATALOG);
 
         $groups = $this->xml->elements(
             Description::CLASSI,
@@ -85,22 +87,6 @@ class Stock
         );
         $this->createProducts($products, $catalogId);
 
-    }
-
-    /**
-     * Аттрибут каталога "Содержит только изменения"
-     */
-    private function attrChanges()
-    {
-        $catalog = $this->xml->elements(
-            Description::CATALOG
-        );
-        $attrs = $catalog[0]->attribute();
-
-        $this->event([
-            'entityType' => self::KEY_SETS,
-            'changes' => isset($attrs[Description::CONTAINS_ONLY_THE_CHANGES]),
-        ]);
     }
 
     /**

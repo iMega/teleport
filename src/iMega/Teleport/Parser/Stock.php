@@ -28,10 +28,10 @@ use iMega\Teleport\StringsTools;
 class Stock
 {
     const KEY_GROUPS = 1,
-        KEY_PROP   = 10,
-        KEY_PROD   = 20,
-        KEY_MISC   = 30,
-        KEY_SETS   = 40;
+        KEY_PROP     = 10,
+        KEY_PROD     = 20,
+        KEY_MISC     = 30,
+        KEY_SETS     = 40;
 
     /**
      * @var EventDispatcherInterface
@@ -43,6 +43,10 @@ class Stock
      */
     protected $xml;
 
+    /**
+     * @param string                   $data
+     * @param EventDispatcherInterface $dispatcher
+     */
     public function __construct($data, EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
@@ -56,42 +60,31 @@ class Stock
     {
         $this->attrChanges();
 
-        $groups = $this->xml->deepElement(
-            $this->xml->root(),
+        $groups = $this->xml->elements(
             Description::CLASSI,
             Description::GROUPS,
             Description::GROUP
         );
+        $this->createGroups($groups);
 
-        if (null !== $groups) {
-            $this->createGroups($groups);
-        }
-
-        $properties = $this->xml->deepElement(
-            $this->xml->root(),
+        $properties = $this->xml->elements(
             Description::CLASSI,
             Description::PROPERTIES,
             Description::PROPERY
         );
-        if (null !== $properties) {
-            $this->createProperties($properties);
-        }
+        $this->createProperties($properties);
 
-        $catalogId = $this->xml->deepElement(
-            $this->xml->root(),
-            Description::CATALOG,
-            Description::ID
+        $catalog = $this->xml->elements(
+            Description::CATALOG
         );
-
-        $products = $this->xml->deepElement(
-            $this->xml->root(),
+        $catalogId = $catalog[0]->value(Description::ID);
+        $products = $this->xml->elements(
             Description::CATALOG,
             Description::PRODUCTS,
             Description::PRODUCT
         );
-        if ($products) {
-            $this->createProducts($products, $catalogId);
-        }
+        $this->createProducts($products, $catalogId);
+
     }
 
     /**
@@ -99,11 +92,10 @@ class Stock
      */
     private function attrChanges()
     {
-        $catalog = $this->xml->deepElement(
-            $this->xml->root(),
+        $catalog = $this->xml->elements(
             Description::CATALOG
         );
-        $attrs = $this->xml->attribute($catalog);
+        $attrs = $catalog[0]->attribute();
 
         $this->event([
             'entityType' => self::KEY_SETS,
@@ -114,14 +106,15 @@ class Stock
     /**
      * Создание группы
      *
-     * @param string $group
-     * @param string $parent
+     * @param WalkerXML $group
+     * @param string    $parent
      *
      * @return string
      */
-    private function createGroup($group, $parent){
-        $id   = $this->xml->element(Description::ID, $group);
-        $name = $this->xml->element(Description::NAME, $group);
+    private function createGroup(WalkerXML $group, $parent)
+    {
+        $id   = $group->value(Description::ID);
+        $name = $group->value(Description::NAME);
 
         $this->event([
             'entityType' => self::KEY_GROUPS,
@@ -135,21 +128,24 @@ class Stock
     }
 
     /**
-     * Cоздание групп из xml
+     * Cоздание групп
      *
-     * @param array $groups
-     * @param int   $parent
+     * @param array  $groups
+     * @param string $parent
      *
      * @return void
      */
     private function createGroups($groups, $parent = '')
     {
         foreach ($groups as $group) {
+            /**
+             * @var WalkerXML $group
+             */
             $id = $this->createGroup($group, $parent);
 
-            $subGroup = $this->xml->deepElement(
-                $group,
-                Description::GROUPS
+            $subGroup = $group->elements(
+                Description::GROUPS,
+                Description::GROUP
             );
 
             if (null !== $subGroup) {
@@ -161,70 +157,53 @@ class Stock
     /**
      * Создать товар
      *
-     * @param $product
+     * @param WalkerXML $product
      * @param int   $catalogId
      */
-    private function createProduct($product, $catalogId)
+    private function createProduct(WalkerXML $product, $catalogId)
     {
-        $id = $this->xml->element(Description::ID, $product);
-        $id = substr($id, 0, 36);
+        $id   = $product->value(Description::ID);
+        $id   = substr($id, 0, 36);
+        $name = $product->value(Description::NAME);
 
-        $name = $this->xml->element(Description::NAME, $product);
-        $desc = $this->xml->element(Description::DESC, $product);
-        $img  = $this->xml->element(Description::IMAGE, $product);
-        $article = $this->xml->element(Description::ARTICLE, $product);
-        $slug = StringsTools::translite($name, '-', 199);
         $this->event([
             'entityType' => self::KEY_PROD,
             'title'        => $name,
-            'descr'        => $desc,
+            'descr'        => $product->value(Description::DESC),
             'guid'         => $id,
-            'slug'         => $slug,
+            'slug'         => StringsTools::translite($name, '-', 199),
             'catalog_guid' => $catalogId,
-            'article'      => $article,
-            'img'          => $img,
+            'article'      => $product->value(Description::ARTICLE),
+            'img'          => $product->value(Description::IMAGE),
             'img_prop'     => '',
         ]);
 
-        $group = $this->xml->deepElement(
-            $product,
-            Description::GROUPS,
-            Description::ID
+        $group = $product->elements(
+            Description::GROUPS
         );
-        if ($group) {
-            $this->createProductsGroup($group, $id);
-        }
+        $this->createProductsGroup($group, $id);
 
-        $propertyValues = $this->xml->deepElement(
-            $product,
+        $propertyValues = $product->elements(
             Description::PROPERTYVALUES,
             Description::PROPERTYVALUE
         );
-        if (is_array($propertyValues)) {
-            $this->createProductsPropertyValue($propertyValues, $id);
-        }
+        $this->createProductsPropertyValue($propertyValues, $id);
 
-        $attributes = $this->xml->deepElement(
-            $product,
+        $attributes = $product->elements(
             Description::ATTRIBUTEVALUES,
             Description::ATTRIBUTEVALUE
         );
-        if (is_array($attributes)) {
-            $this->createProductsAttributes($attributes, $id);
-        }
+        $this->createProductsAttributes($attributes, $id);
     }
 
     /**
      * Создать товары
      *
-     * @param array $products
-     * @param int   $catalogId
+     * @param array  $products
+     * @param string $catalogId
      */
-    private function createProducts($products, $catalogId){
-        if (! is_array($products)) {
-            $this->createProduct($products, $catalogId);
-            return;
-        }
+    private function createProducts(array $products, $catalogId)
+    {
         foreach ($products as $product) {
             $this->createProduct($product, $catalogId);
         }
@@ -233,14 +212,17 @@ class Stock
     /**
      * Создать атрибуты товара
      *
-     * @param array $attributes
-     * @param int   $productId
+     * @param array  $attributes
+     * @param string $productId
      */
-    private function createProductsAttributes($attributes, $productId)
+    private function createProductsAttributes(array $attributes, $productId)
     {
         foreach ($attributes as $attribute) {
-            $name  = $this->xml->element(Description::NAME, $attribute);
-            $value = $this->xml->element(Description::VALUE, $attribute);
+            /**
+             * @var WalkerXML $attribute
+             */
+            $name  = $attribute->value(Description::NAME);
+            $value = $attribute->value(Description::VALUE);
 
             if (empty($value)) {
                 continue;
@@ -266,30 +248,17 @@ class Stock
      * @param array $groups
      * @param int   $productId
      */
-    private function createProductsGroup($groups, $productId)
+    private function createProductsGroup(array $groups, $productId)
     {
-        if (! is_array($groups)) {
-            $this->event([
-                'entityType' => self::KEY_MISC,
-                'type'       => 'group',
-                'guid'       => $productId,
-                'label'      => $groups,
-                'val'        => '',
-                'labelSlug'  => '',
-                'countAttr'  => '',
-                'valSlug'    => '',
-                '_visible'   => 0,
-            ]);
-
-            return;
-        }
-
         foreach ($groups as $group) {
+            /**
+             * @var WalkerXML $group
+             */
             $this->event([
                 'entityType' => self::KEY_MISC,
                 'type'       => 'group',
                 'guid'       => $productId,
-                'label'      => $this->xml->element(Description::ID, $group),
+                'label'      => $group->value(Description::ID),
                 'val'        => '',
                 'labelSlug'  => '',
                 'countAttr'  => '',
@@ -302,13 +271,16 @@ class Stock
     /**
      * Создать значания свойств товара
      *
-     * @param array $properties
-     * @param int   $productId
+     * @param array  $properties
+     * @param string $productId
      */
-    private function createProductsPropertyValue($properties, $productId)
+    private function createProductsPropertyValue(array $properties, $productId)
     {
         foreach ($properties as $property) {
-            $propertyValue = $this->xml->element(Description::VALUE, $property);
+            /**
+             * @var WalkerXML $property
+             */
+            $propertyValue = $property->value(Description::VALUE);
             if (empty($propertyValue)) {
                 continue;
             }
@@ -316,7 +288,7 @@ class Stock
                 'entityType' => self::KEY_MISC,
                 'type'       => 'prop',
                 'guid'       => $productId,
-                'label'      => $this->xml->element(Description::ID, $property),
+                'label'      => $property->value(Description::ID, $property),
                 'val'        => StringsTools::cropText($propertyValue, 199),
                 'labelSlug'  => '',
                 'countAttr'  => '',
@@ -331,49 +303,58 @@ class Stock
      *
      * @param array $properties
      */
-    private function createProperties($properties)
+    private function createProperties(array $properties)
     {
         foreach ($properties as $property) {
-            $id   = $this->xml->element(Description::ID, $property);
-            $name = $this->xml->element(Description::NAME, $property);
+            /**
+             * @var WalkerXML $property
+             */
+            $id   = $property->value(Description::ID);
+            $name = $property->value(Description::NAME);
 
-            $isDictionary = $this->xml->element(Description::VALUETYPE, $property);
+            $isDictionary = $property->value(Description::VALUETYPE);
             $valueType = ($isDictionary == Description::DIC) ? 'select' : 'text';
-
-            $slug = StringsTools::translite($name, '-', 199);
 
             $this->event([
                 'entityType'  => self::KEY_PROP,
                 'guid'        => $id,
                 'title'       => $name,
-                'slug'        => $slug,
+                'slug'        => StringsTools::translite($name, '-', 199),
                 'val_type'    => $valueType,
                 'parent_guid' => '',
             ]);
 
 
-            $dictonaries = $this->xml->deepElement(
-                $property,
+            $variants = $property->elements(
                 Description::ATTRIBUTESVARIANTS,
                 Description::DIC
             );
+            $this->createVariants($variants, $id);
+        }
+    }
 
-            if (is_array($dictonaries)) {
-                foreach ($dictonaries as $item) {
-                    $dictonaryId    = $this->xml->element(Description::VALUEID, $item);
-                    $dictonaryValue = $this->xml->element(Description::VALUE, $item);
-                    $slug           = StringsTools::translite($dictonaryValue, '-', 199);
+    /**
+     * Создать варианты значений
+     *
+     * @params array  $variants
+     * @params string $propertyId
+     */
+    protected function createVariants(array $variants, $propertyId)
+    {
+        foreach ($variants as $item) {
+            /**
+             * @var WalkerXML $item
+             */
+            $dictonaryValue = $item->value(Description::VALUE);
 
-                    $this->event([
-                        'entityType'  => self::KEY_PROP,
-                        'guid'        => $dictonaryId,
-                        'title'       => $dictonaryValue,
-                        'slug'        => $slug,
-                        'val_type'    => '',
-                        'parent_guid' => $id,
-                    ]);
-                }
-            }
+            $this->event([
+                'entityType'  => self::KEY_PROP,
+                'guid'        => $item->value(Description::VALUEID),
+                'title'       => $dictonaryValue,
+                'slug'        => StringsTools::translite($dictonaryValue, '-', 199),
+                'val_type'    => '',
+                'parent_guid' => $propertyId,
+            ]);
         }
     }
 

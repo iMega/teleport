@@ -1,5 +1,6 @@
 {"entityType":40,"changes":true}
 {"entityType":1,"guid":"6098d32e-6069-11dd-9499-001e8c60f11c","parent":"","title":"Оптические приводы","slug":"opticheskie-privody"}
+{"entityType":1,"guid":"b53195b4-1da8-11e2-bdc7-001e8c60f11c","parent":"6098d32e-6069-11dd-9499-001e8c60f11c","title":"DVD-RW","slug":"dvd-rw"}
 {"entityType":10,"guid":"3ad1538b-e56c-11e2-8146-00259079b158","title":"Вес","slug":"ves","val_type":"text","parent_guid":""}
 {"entityType":10,"guid":"7ce6dede-9cb2-11e0-8b2d-001e8c60f11c","title":"Вес","slug":"ves","val_type":"text","parent_guid":""}
 {"entityType":10,"guid":"7ce6deea-9cb2-11e0-8b2d-001e8c60f11c","title":"Время доступа в режиме чтения CD","slug":"vremya-dostupa-v-rezhime-chteniya-cd","val_type":"text","parent_guid":""}
@@ -26,7 +27,7 @@
 {"entityType":10,"guid":"7ce6ded5-9cb2-11e0-8b2d-001e8c60f11c","title":"Тип привода","slug":"tip-privoda","val_type":"text","parent_guid":""}
 {"entityType":10,"guid":"7ce6ded7-9cb2-11e0-8b2d-001e8c60f11c","title":"Тип размещения","slug":"tip-razmeshcheniya","val_type":"text","parent_guid":""}
 {"entityType":10,"guid":"7ce6ded9-9cb2-11e0-8b2d-001e8c60f11c","title":"Цвет передней панели","slug":"cvet-peredney-paneli","val_type":"text","parent_guid":""}
-{"entityType":20,"title":"Привод Blue-Ray DVD-RW Liteon iHBS112-115","descr":null,"guid":"348fceb0-219f-11e2-8401-001e8c60f11c","slug":"privod-blue-ray-dvd-rw-liteon-ihbs112-115","catalog_guid":"d35a8ba6-d6ff-11dc-bb41-001a4b58ee99","article":null,"img":null,"img_prop":""}
+{"entityType":20,"title":"Привод Blue-Ray DVD-RW Liteon iHBS112-115","descr":"","guid":"348fceb0-219f-11e2-8401-001e8c60f11c","slug":"privod-blue-ray-dvd-rw-liteon-ihbs112-115","catalog_guid":"d35a8ba6-d6ff-11dc-bb41-001a4b58ee99","article":"","img":"","img_prop":""}
 {"entityType":30,"type":"group","guid":"348fceb0-219f-11e2-8401-001e8c60f11c","label":"b53195b4-1da8-11e2-bdc7-001e8c60f11c","val":"","labelSlug":"","countAttr":"","valSlug":"","_visible":0}
 {"entityType":30,"type":"prop","guid":"348fceb0-219f-11e2-8401-001e8c60f11c","label":"3ad1538b-e56c-11e2-8146-00259079b158","val":"650 г","labelSlug":"","countAttr":"","valSlug":"650-g","_visible":0}
 {"entityType":30,"type":"prop","guid":"348fceb0-219f-11e2-8401-001e8c60f11c","label":"7ce6dede-9cb2-11e0-8b2d-001e8c60f11c","val":"650 г","labelSlug":"","countAttr":"","valSlug":"650-g","_visible":0}
@@ -57,17 +58,17 @@
 {"entityType":30,"type":"attr","guid":"348fceb0-219f-11e2-8401-001e8c60f11c","label":"ВидНоменклатуры","val":"Товар","labelSlug":"vidnomenklatury","countAttr":4,"valSlug":"tovar","_visible":0}
 {"entityType":30,"type":"attr","guid":"348fceb0-219f-11e2-8401-001e8c60f11c","label":"ТипНоменклатуры","val":"Товар","labelSlug":"tipnomenklatury","countAttr":4,"valSlug":"tovar","_visible":0}
 {"entityType":30,"type":"attr","guid":"348fceb0-219f-11e2-8401-001e8c60f11c","label":"Полное наименование","val":"Привод Blue-Ray DVD-RW Liteon iHBS112-115","labelSlug":"polnoe-naimenovanie","countAttr":4,"valSlug":"privod-blue-ray-dvd-rw-liteon-ihbs112-115","_visible":0}
-{"entityType":20,"title":"Привод DVD+\/-RW LiteON IHAS124-14, 22x SuperMulti, SATA, Черный","descr":null,"guid":"1a4ec9af-1192-11e4-8372-00259079b159","slug":"privod-dvd-rw-liteon-ihas124-14-22x-supermulti-sata-chernyy","catalog_guid":"d35a8ba6-d6ff-11dc-bb41-001a4b58ee99","article":null,"img":null,"img_prop":""}
+{"entityType":20,"title":"Привод DVD+\/-RW LiteON IHAS124-14, 22x SuperMulti, SATA, Черный","descr":"","guid":"1a4ec9af-1192-11e4-8372-00259079b159","slug":"privod-dvd-rw-liteon-ihas124-14-22x-supermulti-sata-chernyy","catalog_guid":"d35a8ba6-d6ff-11dc-bb41-001a4b58ee99","article":"","img":"","img_prop":""}
 {"entityType":30,"type":"group","guid":"1a4ec9af-1192-11e4-8372-00259079b159","label":"b53195b4-1da8-11e2-bdc7-001e8c60f11c","val":"","labelSlug":"","countAttr":"","valSlug":"","_visible":0}
 {"entityType":30,"type":"attr","guid":"1a4ec9af-1192-11e4-8372-00259079b159","label":"ВидНоменклатуры","val":"Товар","labelSlug":"vidnomenklatury","countAttr":4,"valSlug":"tovar","_visible":0}
 {"entityType":30,"type":"attr","guid":"1a4ec9af-1192-11e4-8372-00259079b159","label":"ТипНоменклатуры","val":"Товар","labelSlug":"tipnomenklatury","countAttr":4,"valSlug":"tovar","_visible":0}
 {"entityType":30,"type":"attr","guid":"1a4ec9af-1192-11e4-8372-00259079b159","label":"Полное наименование","val":"Привод DVD+\/-RW LiteON IHAS124-14, 22x SuperMulti, SATA, Черный","labelSlug":"polnoe-naimenovanie","countAttr":4,"valSlug":"privod-dvd-rw-liteon-ihas124-14-22x-supermulti-sata-chernyy","_visible":0}
-{"entityType":20,"title":"Привод DVD+\/-RW LiteON IHAS124-14, 22x SuperMulti, SATA, Черный","descr":null,"guid":"1a4ec9af-1192-11e4-8372-00259079b159","slug":"privod-dvd-rw-liteon-ihas124-14-22x-supermulti-sata-chernyy","catalog_guid":"d35a8ba6-d6ff-11dc-bb41-001a4b58ee99","article":null,"img":null,"img_prop":""}
+{"entityType":20,"title":"Привод DVD+\/-RW LiteON IHAS124-14, 22x SuperMulti, SATA, Черный","descr":"","guid":"1a4ec9af-1192-11e4-8372-00259079b159","slug":"privod-dvd-rw-liteon-ihas124-14-22x-supermulti-sata-chernyy","catalog_guid":"d35a8ba6-d6ff-11dc-bb41-001a4b58ee99","article":"","img":"","img_prop":""}
 {"entityType":30,"type":"group","guid":"1a4ec9af-1192-11e4-8372-00259079b159","label":"b53195b4-1da8-11e2-bdc7-001e8c60f11c","val":"","labelSlug":"","countAttr":"","valSlug":"","_visible":0}
 {"entityType":30,"type":"attr","guid":"1a4ec9af-1192-11e4-8372-00259079b159","label":"ВидНоменклатуры","val":"Товар","labelSlug":"vidnomenklatury","countAttr":4,"valSlug":"tovar","_visible":0}
 {"entityType":30,"type":"attr","guid":"1a4ec9af-1192-11e4-8372-00259079b159","label":"ТипНоменклатуры","val":"Товар","labelSlug":"tipnomenklatury","countAttr":4,"valSlug":"tovar","_visible":0}
 {"entityType":30,"type":"attr","guid":"1a4ec9af-1192-11e4-8372-00259079b159","label":"Полное наименование","val":"Привод DVD+\/-RW LiteON IHAS124-14, 22x SuperMulti, SATA, Черный","labelSlug":"polnoe-naimenovanie","countAttr":4,"valSlug":"privod-dvd-rw-liteon-ihas124-14-22x-supermulti-sata-chernyy","_visible":0}
-{"entityType":20,"title":"Привод DVD+\/-RW Samsung SH-224DB, 24x SuperMulti, SATA, Черный","descr":null,"guid":"b883f4ef-d3f8-11e2-b716-00259079b159","slug":"privod-dvd-rw-samsung-sh-224db-24x-supermulti-sata-chernyy","catalog_guid":"d35a8ba6-d6ff-11dc-bb41-001a4b58ee99","article":null,"img":null,"img_prop":""}
+{"entityType":20,"title":"Привод DVD+\/-RW Samsung SH-224DB, 24x SuperMulti, SATA, Черный","descr":"","guid":"b883f4ef-d3f8-11e2-b716-00259079b159","slug":"privod-dvd-rw-samsung-sh-224db-24x-supermulti-sata-chernyy","catalog_guid":"d35a8ba6-d6ff-11dc-bb41-001a4b58ee99","article":"","img":"","img_prop":""}
 {"entityType":30,"type":"group","guid":"b883f4ef-d3f8-11e2-b716-00259079b159","label":"b53195b4-1da8-11e2-bdc7-001e8c60f11c","val":"","labelSlug":"","countAttr":"","valSlug":"","_visible":0}
 {"entityType":30,"type":"prop","guid":"b883f4ef-d3f8-11e2-b716-00259079b159","label":"3ad1538b-e56c-11e2-8146-00259079b158","val":"630 г","labelSlug":"","countAttr":"","valSlug":"630-g","_visible":0}
 {"entityType":30,"type":"prop","guid":"b883f4ef-d3f8-11e2-b716-00259079b159","label":"7ce6dede-9cb2-11e0-8b2d-001e8c60f11c","val":"630 г","labelSlug":"","countAttr":"","valSlug":"630-g","_visible":0}

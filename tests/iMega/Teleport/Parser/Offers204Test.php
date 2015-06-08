@@ -31,7 +31,7 @@ use \PHPUnit_Framework_MockObject_MockObject;
 /**
  * Class StockTest
  */
-class Offers204Test //extends \PHPUnit_Framework_TestCase
+class Offers204Test extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -86,7 +86,7 @@ class Offers204Test //extends \PHPUnit_Framework_TestCase
 
         $adapter = new Gaufrette\Adapter\Local(__DIR__.'/../../../Fixtures/2.04/expected');
         $fs = new Gaufrette\Filesystem($adapter);
-        $expected = $fs->read('import.txt');
+        $expected = $fs->read('offers.txt');
 
         $this->assertEquals($expected, $actual);
     }

@@ -39,6 +39,10 @@ class Offers
      */
     protected $xml;
 
+    /**
+     * @param string                   $data
+     * @param EventDispatcherInterface $dispatcher
+     */
     public function __construct($data, EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
@@ -52,15 +56,12 @@ class Offers
     {
         $this->attrChanges();
 
-        $offers = $this->xml->deepElement(
-            $this->xml->root(),
+        $offers = $this->xml->elements(
             Description::PACKAGEOFFERS,
             Description::OFFERS,
             Description::OFFER
         );
-        if ($offers) {
-            $this->createOffers($offers);
-        }
+        $this->createOffers($offers);
     }
 
     /**
@@ -68,11 +69,10 @@ class Offers
      */
     private function attrChanges()
     {
-        $offers = $this->xml->deepElement(
-            $this->xml->root(),
+        $offers = $this->xml->elements(
             Description::PACKAGEOFFERS
         );
-        $attrs = $this->xml->attribute($offers);
+        $attrs = $offers[0]->attribute();
 
         $this->event([
             'entityType' => self::KEY_SETS,
@@ -88,45 +88,42 @@ class Offers
     private function createOffers(array $offers)
     {
         foreach ($offers as $offer) {
-            $id = $this->xml->element(Description::ID, $offer);
-            $baseUnit = $this->xml->element(Description::BASEUNIT, $offer);
+            /**
+             * @var WalkerXML $offer
+             */
+            $id       = $offer->value(Description::ID);
+            $baseUnit = $offer->value(Description::BASEUNIT);
 
             $attrUnit = array();
             if ($baseUnit) {
-                $attrUnit = $this->xml->attribute($offer->{Description::BASEUNIT});
+                $units = $offer->elements(Description::BASEUNIT);
             }
 
             $this->event([
                 'entityType'      => self::KEY_OFFERS,
                 'guid'            => $id,
                 'prod_guid'       => substr($id, 0, 36),
-                'barcode'         => $this->xml->element(Description::BARCODE, $offer),
-                'title'           => $this->xml->element(Description::NAME, $offer),
+                'barcode'         => $offer->value(Description::BARCODE),
+                'title'           => $offer->value(Description::NAME),
                 'base_unit'       => $baseUnit,
-                'base_unit_key'   => isset($attrUnit[Description::KEY]) ? $attrUnit[Description::KEY] : '',
-                'base_unit_title' => isset($attrUnit[Description::FULLNAME]) ? $attrUnit[Description::FULLNAME] : '',
-                'base_unit_int'   => isset($attrUnit[Description::INTERNATIONALABBREVIATION]) ? $attrUnit[Description::INTERNATIONALABBREVIATION] : '',
-                'amount'          => $this->xml->element(Description::AMOUNT, $offer),
+                'base_unit_key'   => isset($units[Description::KEY]) ? $units[Description::KEY] : '',
+                'base_unit_title' => isset($units[Description::FULLNAME]) ? $units[Description::FULLNAME] : '',
+                'base_unit_int'   => isset($units[Description::INTERNATIONALABBREVIATION]) ? $units[Description::INTERNATIONALABBREVIATION] : '',
+                'amount'          => $offer->value(Description::AMOUNT),
                 'postType'        => 'product_variation',
             ]);
 
-            $features = $this->xml->deepElement(
-                $offer,
+            $features = $offer->elements(
                 Description::PRODUCTFEATURES,
                 Description::PRODUCTFEATURE
             );
-            if (is_array($features)) {
-                $this->createOffersFeatures($features, $id);
-            }
+            $this->createOffersFeatures($features, $id);
 
-            $prices = $this->xml->deepElement(
-                $offer,
+            $prices = $offer->elements(
                 Description::PRICES,
                 Description::PRICE
             );
-            if ($prices) {
-                $this->createOffersPrices($prices, $id);
-            }
+            $this->createOffersPrices($prices, $id);
         }
     }
 
@@ -139,10 +136,13 @@ class Offers
     private function createOffersFeatures(array $features, $id)
     {
         foreach ($features as $feature) {
+            /**
+             * @var WalkerXML $feature
+             */
             list($productGuid, $variantGuid) = explode('#', $id);
 
-            $name  = $this->xml->element(Description::NAME, $feature);
-            $value = $this->xml->element(Description::VALUE, $feature);
+            $name  = $feature->value(Description::NAME);
+            $value = $feature->value(Description::VALUE);
 
             $this->event([
                 'entityType'  => self::KEY_FEATURES,
@@ -158,39 +158,27 @@ class Offers
     }
 
     /**
-     * Создать цену товара
-     *
-     * @param \SimpleXMLElement $price Array prices.
-     * @param string            $id    GUID price.
-     */
-    private function createOfferPrice(\SimpleXMLElement $price, $id)
-    {
-        $this->event([
-            'entityType' => self::KEY_PRICES,
-            'offer_guid' => $id,
-            'title'      => $this->xml->element(Description::REPRESENTATION, $price),
-            'price'      => $this->xml->element(Description::PRICEBYUNIT, $price),
-            'currency'   => $this->xml->element(Description::CURRENCY, $price),
-            'unit'       => $this->xml->element(Description::UNIT, $price),
-            'ratio'      => $this->xml->element(Description::RATIO, $price),
-            'type_guid'  => $this->xml->element(Description::PRICETYPEID, $price),
-        ]);
-    }
-
-    /**
      * Создать цены товара
      *
-     * @param array|\SimpleXMLElement $prices
+     * @param array  $prices
      * @param string $id
      */
-    private function createOffersPrices($prices, $id)
+    private function createOffersPrices(array $prices, $id)
     {
-        if (! is_array($prices)) {
-            $this->createOfferPrice($prices, $id);
-            return;
-        }
         foreach ($prices as $price) {
-            $this->createOfferPrice($price, $id);
+            /**
+             * @var WalkerXML $price
+             */
+            $this->event([
+                'entityType' => self::KEY_PRICES,
+                'offer_guid' => $id,
+                'title'      => $price->value(Description::REPRESENTATION),
+                'price'      => $price->value(Description::PRICEBYUNIT),
+                'currency'   => $price->value(Description::CURRENCY),
+                'unit'       => $price->value(Description::UNIT),
+                'ratio'      => $price->value(Description::RATIO),
+                'type_guid'  => $price->value(Description::PRICETYPEID),
+            ]);
         }
     }
 

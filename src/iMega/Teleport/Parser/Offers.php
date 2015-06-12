@@ -21,6 +21,7 @@ use iMega\WalkerXML\WalkerXML;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use iMega\Teleport\Events\ParseStock;
 use iMega\Teleport\StringsTools;
+use Teleport\Controller\Events;
 
 class Offers
 {
@@ -137,8 +138,8 @@ class Offers
                 'variantGuid' => $variantGuid,
                 'title'       => $name,
                 'val'         => $value,
-                'titleSlug'   => StringsTools::translite($name, '-', 199),
-                'valSlug'     => StringsTools::translite($value, '-', 199),
+                'titleSlug'   => StringsTools::t15n($name, '-', 199),
+                'valSlug'     => StringsTools::t15n($value, '-', 199),
             ]);
         }
     }
@@ -176,7 +177,7 @@ class Offers
     public function event(array $data)
     {
         $this->dispatcher->dispatch(
-            'buffer.parse.offers',
+            Events::BUFFER_PARSE_STOCK,
             new ParseStock($this->json($data))
         );
     }

@@ -21,6 +21,7 @@ use iMega\WalkerXML\WalkerXML;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use iMega\Teleport\Events\ParseStock;
 use iMega\Teleport\StringsTools;
+use Teleport\Controller\Events;
 
 /**
  * Class Stock
@@ -107,7 +108,7 @@ class Stock
             'guid'       => $id,
             'parent'     => $parent,
             'title'      => $name,
-            'slug'       => StringsTools::translite($name),
+            'slug'       => StringsTools::t15n($name),
         ]);
 
         return $id;
@@ -157,7 +158,7 @@ class Stock
             'title'        => $name,
             'descr'        => $product->value(Description::DESC),
             'guid'         => $id,
-            'slug'         => StringsTools::translite($name, '-', 199),
+            'slug'         => StringsTools::t15n($name, '-', 199),
             'catalog_guid' => $catalogId,
             'article'      => $product->value(Description::ARTICLE),
             'img'          => $product->value(Description::IMAGE),
@@ -220,9 +221,9 @@ class Stock
                 'guid'      => $productId,
                 'label'     => $name,
                 'val'       => $value,
-                'labelSlug' => StringsTools::translite($name, '-', 199),
+                'labelSlug' => StringsTools::t15n($name, '-', 199),
                 'countAttr' => count($attributes),
-                'valSlug'   => StringsTools::translite($value, '-', 199),
+                'valSlug'   => StringsTools::t15n($value, '-', 199),
                 '_visible'  => 0, //@todo Управление отображением атрибутов
             ]);
         }
@@ -278,7 +279,7 @@ class Stock
                 'val'        => StringsTools::cropText($propertyValue, 199),
                 'labelSlug'  => '',
                 'countAttr'  => '',
-                'valSlug'    => StringsTools::translite($propertyValue, '-', 199),
+                'valSlug'    => StringsTools::t15n($propertyValue, '-', 199),
                 '_visible'   => 0,
             ]);
         }
@@ -305,7 +306,7 @@ class Stock
                 'entityType'  => self::KEY_PROP,
                 'guid'        => $id,
                 'title'       => $name,
-                'slug'        => StringsTools::translite($name, '-', 199),
+                'slug'        => StringsTools::t15n($name, '-', 199),
                 'val_type'    => $valueType,
                 'parent_guid' => '',
             ]);
@@ -337,7 +338,7 @@ class Stock
                 'entityType'  => self::KEY_PROP,
                 'guid'        => $item->value(Description::VALUEID),
                 'title'       => $dictonaryValue,
-                'slug'        => StringsTools::translite($dictonaryValue, '-', 199),
+                'slug'        => StringsTools::t15n($dictonaryValue, '-', 199),
                 'val_type'    => '',
                 'parent_guid' => $propertyId,
             ]);
@@ -352,7 +353,7 @@ class Stock
     public function event(array $data)
     {
         $this->dispatcher->dispatch(
-            'buffer.parse.stock',
+            Events::BUFFER_PARSE_STOCK,
             new ParseStock($this->json($data))
         );
     }

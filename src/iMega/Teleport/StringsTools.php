@@ -31,7 +31,7 @@ class StringsTools
      *
      * @return string
      */
-    public static function translite($str, $delimiter = '-', $crop = 0)
+    public static function t15n($str, $delimiter = '-', $crop = 0)
     {
         $result = mb_strtolower($str, 'UTF-8');
         $result = $crop > 0 ? self::cropText($result, $crop) : $result;

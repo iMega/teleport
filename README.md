@@ -60,3 +60,9 @@ iMegaTeleport выгружает данные о товаре: название,
 
 
 Ознакомьтесь пожалуйста с [инструкцией](http://teleport.imega.ru/instructions).
+
+# Dev
+
+You needs docker and make.
+
+Quick start `make build test start` 

@@ -7,11 +7,6 @@ use iMega\WalkerXML\WalkerXML;
 trait Attribute
 {
     /**
-     * @var WalkerXML
-     */
-    protected $xml;
-
-    /**
      * Send event
      *
      * @param array $data Data of record.

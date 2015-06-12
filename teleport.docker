@@ -1,0 +1,15 @@
+FROM leanlabs/php:1.1.1
+
+COPY ./ /app
+
+RUN apk add --update \
+        php-zlib \
+        php-mysqli && \
+    rm -rf /var/cache/apk/* && \
+    curl -0L http://wordpress.org/wordpress-4.2.2.tar.gz | tar zxv && \
+    cd /wordpress/wp-content/plugins && \
+    wget http://downloads.wordpress.org/plugin/woocommerce.zip;unzip woocommerce.zip;rm woocommerce.zip
+
+ENTRYPOINT ["/bin/sh", "/app/build/entrypoints/teleport.sh"]
+
+CMD ["php-fpm", "-F", "-d error_reporting=E_ALL", "-d log_errors=ON", "-d error_log=/dev/stdout","-d display_errors=YES"]

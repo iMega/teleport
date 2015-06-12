@@ -1,28 +1,65 @@
-NAME = imega/composer
-TAG = 1.0.1
+IMAGES = imega/teleport-test imega/teleport
+CONTAINERS = teleport_db teleport teleport_nginx
+
+# Uncomment only for symlink
+CURDIR = `pwd`
+
+quick: build test start
 
 build:
-	@docker run --rm -v `pwd`:/data $(NAME):$(TAG) update
+	@docker build -f "teleport-test.docker" -t imega/teleport-test .
+	@docker run --rm -v $(CURDIR):/data imega/composer:1.0.1 update
+	@docker build -f "teleport.docker" -t imega/teleport .
 
 start:
+	@mkdir -p $(CURDIR)/build/db
+
+	@docker run -d --name "teleport_db" -v $(CURDIR)/build/db:/var/lib/mysql -p 3306:3306 imega/mysql
+
+	@docker run --rm \
+		-v $(CURDIR)/build/sql:/sql \
+		--link teleport_db:teleport_db \
+		imega/mysql-client:1.1.0 \
+		mysqladmin --silent --host=teleport_db --wait=5 ping
+
+	@docker run --rm \
+		-v $(CURDIR)/build/sql:/sql \
+		--link teleport_db:teleport_db \
+		imega/mysql-client:1.1.0 \
+		mysql --host=teleport_db -e "source /sql/teleport.sql"
+
 	@docker run -d \
-		-v `pwd`:/app \
-		--name teleport \
-		leanlabs/php:1.1.1 \
-		php-fpm -F -d error_reporting=E_ALL -d log_errors=ON -d error_log=/dev/stdout -d display_errors=YES
+		--name "teleport" \
+		--link teleport_db:teleport_db \
+		-v $(CURDIR):/app \
+		imega/teleport \
+		php-fpm -F \
+			-d error_reporting=E_ALL \
+			-d log_errors=On \
+			-d error_log=/dev/stdout \
+			-d display_errors=On
 
 	@docker run -d \
 		--name teleport_nginx \
 		--link teleport:service \
-		-v `pwd`/build/sites-enabled:/etc/nginx/sites-enabled \
-		-v `pwd`/build/conf.d:/etc/nginx/conf.d \
-		-p 127.0.0.1:80:80 \
-		hub.nethouse.ru/nethouse/nginx
+		-v $(CURDIR)/build/sites-enabled:/etc/nginx/sites-enabled \
+		-v $(CURDIR)/build/conf.d:/etc/nginx/conf.d \
+		-v $(CURDIR)/build/entrypoints/teleport-nginx.sh:/teleport-nginx.sh \
+		-p 80:80 \
+		--entrypoint=/teleport-nginx.sh \
+		leanlabs/nginx
+
+stop:
+	-docker stop $(CONTAINERS)
+
+clean: stop
+	@rm -rf $(CURDIR)/build/db
+	-docker rm -fv $(CONTAINERS)
 
 test:
-	@docker run --rm -v `pwd`:/data imega/phptest vendor/bin/phpunit --debug
+	@docker run --rm -v $(CURDIR):/data imega/teleport-test vendor/bin/phpunit
 
-x:
-	@docker run --rm -v `pwd`:/data imega/phptest php test.php
+destroy: clean
+	@docker rmi -f $(IMAGES)
 
-.PHONY: build start test x
+.PHONY: build start test

@@ -2,7 +2,7 @@ IMAGES = imega/teleport-test imega/teleport
 CONTAINERS = teleport_db teleport teleport_nginx
 
 # Uncomment only for symlink
-CURDIR = `pwd`
+#CURDIR = `pwd`
 
 quick: build test start
 
@@ -32,6 +32,7 @@ start:
 		--name "teleport" \
 		--link teleport_db:teleport_db \
 		-v $(CURDIR):/app \
+		-p 9001:9001 \
 		imega/teleport \
 		php-fpm -F \
 			-d error_reporting=E_ALL \
@@ -52,6 +53,9 @@ start:
 stop:
 	-docker stop $(CONTAINERS)
 
+dep:
+	@docker run --rm -v $(CURDIR):/data imega/composer:1.0.1 update
+
 clean: stop
 	@rm -rf $(CURDIR)/build/db
 	-docker rm -fv $(CONTAINERS)
@@ -62,4 +66,4 @@ test:
 destroy: clean
 	@docker rmi -f $(IMAGES)
 
-.PHONY: build start test
+.PHONY: build start test dep

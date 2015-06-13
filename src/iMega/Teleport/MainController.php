@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace Teleport\Controller;
+namespace iMega\Teleport\Controller;
 
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Class Controller
  */
-class Controller implements ControllerProviderInterface
+class MainController implements ControllerProviderInterface
 {
     /**
      * Returns routes to connect to the given controller.

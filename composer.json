@@ -10,7 +10,7 @@
     }
   ],
   "autoload": {
-    "psr-4": {"iMega\\Teleport\\": "src/iMega/Teleport"}
+    "psr-4": {"iMega\\": "src/iMega"}
   },
   "require": {
     "php": ">=5.5.9",

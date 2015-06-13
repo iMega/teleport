@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace iMega\Teleport\Controller;
+namespace iMega\Teleport;
 
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
@@ -36,7 +36,7 @@ class MainController implements ControllerProviderInterface
      */
     public function connect(Application $app)
     {
-        $app->before($app['teleport.auth']);
+        //$app->before($app['teleport.auth']);
         $c = $app['controllers_factory'];
         $c->get("/checkauth", array($this, 'checkauth'))->bind('checkauth');
         $c->get("/init", array($this, 'init'))->bind('init');

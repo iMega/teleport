@@ -21,6 +21,7 @@ use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use iMega\Teleport\Events\ParseStock;
 use iMega\Teleport\BufferInterface;
+use Teleport\Controller\Events;
 
 /**
  * Class BufferSubscriber
@@ -48,7 +49,7 @@ class BufferSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            'buffer.parse.stock' => ['parseStock', 100],
+            Events::BUFFER_PARSE_STOCK => ['parseStock', 100],
         );
     }
 

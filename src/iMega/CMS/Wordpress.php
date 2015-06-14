@@ -17,6 +17,8 @@
  */
 namespace iMega\CMS;
 
+use iMega\CMS\Security\User\Provider\WordpressUserProvider;
+
 class Wordpress implements CmsInterface
 {
     protected $mnemo = 'IMEGATELEPORT';
@@ -26,9 +28,32 @@ class Wordpress implements CmsInterface
 
     }
 
+    /**
+     * @return string
+     */
+    public function authProvider()
+    {
+        return '\iMega\CMS\Authentication\Provider\WordpressAuthProvider';
+    }
+
+    /**
+     * Return security
+     *
+     * @return array
+     */
     public function auth()
     {
-        return '';
+        return [
+            'security.firewalls' => array(
+                'http-auth' => array(
+                    'pattern' => '^.*$',
+                    'http' => true,
+                    'users' => function () {
+                        return new WordpressUserProvider();
+                    },
+                ),
+            ),
+        ];
     }
 
     /**
@@ -39,7 +64,7 @@ class Wordpress implements CmsInterface
      */
     public function db()
     {
-        $config['db.options'] = [];
+        $config = [];
 
         $keys = array('user', 'password', 'host', 'port', 'socket');
         foreach ($keys as $key) {

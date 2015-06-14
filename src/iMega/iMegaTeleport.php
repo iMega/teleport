@@ -33,23 +33,38 @@ class iMegaTeleport
     public function __construct(CmsInterface $cms)
     {
         $options = array_merge_recursive(
-            $cms->db()
+            $cms->auth(),
+            $cms->db(),
+            $cms->storage()
         );
         $appConfig = require_once __DIR__ . '/../../config/app.php';
         $app = new Application(array_merge_recursive($appConfig, $options));
 
         $app['debug'] = true;
         $app['dispatcher']->addSubscriber(new RequestSubscriber($app));
+
+        $app->register(new \Silex\Provider\SecurityServiceProvider());
+        $app['security.authentication_provider.dao._proto'] = $app->protect(function ($name) use ($app, $cms) {
+            return function () use ($app, $name, $cms) {
+                $authProvider = $cms->authProvider();
+                return new $authProvider(
+                    $app['security.user_provider.'.$name],
+                    $app['security.user_checker'],
+                    $name,
+                    $app['security.encoder_factory'],
+                    $app['security.hide_user_not_found']
+                );
+            };
+        });
+
         $app->register(new \Silex\Provider\ServiceControllerServiceProvider());
         foreach ($app['mount'] as $prefix => $controller) {
             $app->mount($prefix, $controller);
         }
         $request = Request::createFromGlobals();
-        $response = $app->handle($request);
 
         if (0 === strpos($request->getBaseUrl(), '/1c_exchange.php')) {
-            $response->send();
+            $app->run();
         }
-        $app->terminate($request, $response);
     }
 }

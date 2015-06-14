@@ -20,6 +20,16 @@ namespace iMega\CMS;
 interface CmsInterface
 {
     /**
+     * @return string
+     */
+    public function authProvider();
+
+    /**
+     * @return array
+     */
+    public function auth();
+
+    /**
      * @return array
      */
     public function db();

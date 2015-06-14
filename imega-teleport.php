@@ -7,7 +7,7 @@
  * Author: iMega ltd
  * Author URI: http://imega.ru
  * Requires at least: 3.5
- * Tested up to: 4.0
+ * Tested up to: 4.2.2
  */
 /**
  * Copyright (C) 2014 iMega ltd Dmitry Gavriloff (email: info@imega.ru),

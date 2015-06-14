@@ -36,7 +36,6 @@ class MainController implements ControllerProviderInterface
      */
     public function connect(Application $app)
     {
-        //$app->before($app['teleport.auth']);
         $c = $app['controllers_factory'];
         $c->get("/checkauth", array($this, 'checkauth'))->bind('checkauth');
         $c->get("/init", array($this, 'init'))->bind('init');

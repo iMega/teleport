@@ -5,7 +5,7 @@ machine:
     version: 5.6.5
 
 dependencies:
-  build:
+  pre:
     - make build
   override:
     - composer install --prefer-source --no-interaction

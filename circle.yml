@@ -6,7 +6,7 @@ machine:
 
 dependencies:
   pre:
-    - make build
+    - docker build -f "teleport.docker" -t imega/teleport .
   override:
     - composer install --prefer-source --no-interaction
 

@@ -39,29 +39,34 @@ class MainController implements ControllerProviderInterface
         $c = $app['controllers_factory'];
         $c->get("/checkauth", array($this, 'checkauth'))->bind('checkauth');
         $c->get("/init", array($this, 'init'))->bind('init');
-        $c->get("/file", array($this, 'sendFile'))->bind('sendFile');
+        $c->get("/file", array($this, 'acceptFile'))->bind('acceptFile');
         $c->get("/import", array($this, 'import'))->bind('import');
 
         return $c;
     }
 
-    public function checkauth(Request $request)
+    /**
+     * @return Response
+     */
+    public function checkauth()
     {
-        echo "checkauth\n";
-
-        $response = '';
-
-        return $response;
+        return new Response("success\n", Response::HTTP_OK);
     }
 
-    public function init(Request $request)
+    /**
+     * @return Response
+     */
+    public function init()
     {
-        echo "init\n";
-
-        return true;
+        return new Response("zip=no\nfile_limit=2000000", Response::HTTP_OK);
     }
 
-    public function sendFile(Request $request)
+    /**
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public function acceptFile(Request $request)
     {
         echo "file\n";
 

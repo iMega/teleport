@@ -1,9 +1,6 @@
 IMAGES = imega/teleport-test imega/teleport
 CONTAINERS = teleport_db teleport teleport_nginx
 
-# Uncomment only for symlink
-#CURDIR = `pwd`
-
 quick: build test start
 
 build:

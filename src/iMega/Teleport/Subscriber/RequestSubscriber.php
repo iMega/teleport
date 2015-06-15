@@ -19,7 +19,6 @@ namespace iMega\Teleport\Subscriber;
 
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -49,15 +48,8 @@ class RequestSubscriber implements EventSubscriberInterface
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-
-        $agentHeader = $request->headers->get('user-agent');
-        $agent = strstr($agentHeader, '/', true);
-        $ctrl = 'default';
-        if (array_key_exists($agent, $this->app['user.agents'])) {
-            $ctrl = $this->app['user.agents'][$agent];
-        }
-        $mode = $request->get('mode');
-        $request->server->set('REQUEST_URI', "/$ctrl/$mode");
+        $mode    = $request->get('mode');
+        $request->server->set('REQUEST_URI', "/default/$mode");
     }
 
     /**

@@ -12,8 +12,8 @@ dependencies:
   override:
     - docker build -f teleport.docker -t imega/teleport .
     - mkdir -p ./build/db
-    - docker run -d --name "teleport_db" -v build/db:/var/lib/mysql -p 3306:3306 imega/mysql
-    - docker run --rm -v build/sql:/sql --link teleport_db:teleport_db imega/mysql-client:1.1.0 mysqladmin --silent --host=teleport_db --wait=5 ping
+    - docker run -d --name "teleport_db" -v  `pwd`/build/db:/var/lib/mysql -p 3306:3306 imega/mysql
+    - docker run --rm -v `pwd`/build/sql:/sql --link teleport_db:teleport_db imega/mysql-client:1.1.0 mysqladmin --silent --host=teleport_db --wait=5 ping
     - composer install --prefer-source --no-interaction
 
 test:

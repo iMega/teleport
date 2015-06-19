@@ -13,7 +13,8 @@ dependencies:
     - docker build -f teleport.docker -t imega/teleport .
     - mkdir -p ./build/db
     - docker run -d --name "teleport_db" -v $PWD/build/db:/var/lib/mysql imega/mysql
-    - docker run --rm -v $PWD/build/sql:/sql --link teleport_db:teleport_db imega/mysql-client:1.1.0 mysqladmin --silent --host=teleport_db --wait=5 ping
+    - docker run --link teleport_db:teleport_db imega/mysql-client:1.1.0 mysqladmin --silent --host=teleport_db --wait=5 ping
+    - docker run -v $PWD/build/sql:/sql --link teleport_db:teleport_db imega/mysql-client:1.1.0 mysql --host=teleport_db -e "source /sql/teleport.sql"
     - composer install --prefer-source --no-interaction
 
 test:

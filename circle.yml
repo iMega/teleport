@@ -10,6 +10,7 @@ dependencies:
   post:
     - rm -r ~/.gradle
   override:
+    - docker build -f teleport.docker -t imega/teleport .
     - composer install --prefer-source --no-interaction
 
 test:

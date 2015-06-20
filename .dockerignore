@@ -11,3 +11,4 @@ tests
 vendor
 .DS_Store
 .idea
+build/db

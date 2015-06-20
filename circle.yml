@@ -8,13 +8,18 @@ machine:
 
 dependencies:
   pre:
+    - composer install --prefer-source --no-interaction
     - docker build -f teleport.docker -t imega/teleport .
     - mkdir -p ./build/db
     - docker run -d --name "teleport_db" -v $PWD/build/db:/var/lib/mysql imega/mysql
     - docker run --link teleport_db:teleport_db imega/mysql-client:1.1.0 mysqladmin --silent --host=teleport_db --wait=5 ping
     - docker run -v $PWD/build/sql:/sql --link teleport_db:teleport_db imega/mysql-client:1.1.0 mysql --host=teleport_db -e "source /sql/teleport.sql"
     - docker run -v $PWD/build/sql:/sql --link teleport_db:teleport_db imega/mysql-client:1.1.0 mysql --host=teleport_db -e "source /sql/teleport_enable.sql"
-  override:
-    - composer install --prefer-source --no-interaction
+    - docker run -d --name "teleport" --link teleport_db:teleport_db -v $PWD:/app imega/teleport php-fpm -F -d error_reporting=E_ALL -d log_errors=On -d error_log=/dev/stdout -d display_errors=On
+    - docker run -d --name teleport_nginx --link teleport:service -v $PWD/build/sites-enabled:/etc/nginx/sites-enabled -v $PWD/build/conf.d:/etc/nginx/conf.d -v $PWD/build/entrypoints/teleport-nginx.sh:/teleport-nginx.sh -p 80:80 --entrypoint=/teleport-nginx.sh leanlabs/nginx
   post:
     - rm -r ~/.gradle
+
+test:
+  override:
+    - vendor/bin/phpunit

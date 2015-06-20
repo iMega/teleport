@@ -15,10 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace Teleport\Controller;
+namespace iMega\Teleport;
 
-
+/**
+ * Class Events
+ */
 final class Events
 {
-    const BUFFER_PARSE_STOCK = 'buffer.parse.stock';
+    const BUFFER_PARSE_STOCK      = 'buffer.parse.stock',
+          BUFFER_PARSE_STOCK_END  = 'buffer.parse.stock.end',
+          BUFFER_PARSE_OFFERS     = 'buffer.parse.offers',
+          BUFFER_PARSE_OFFERS_END = 'buffer.parse.offers.end';
 }

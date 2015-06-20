@@ -21,7 +21,7 @@ use iMega\WalkerXML\WalkerXML;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use iMega\Teleport\Events\ParseStock;
 use iMega\Teleport\StringsTools;
-use Teleport\Controller\Events;
+use iMega\Teleport\Events;
 
 class Offers
 {

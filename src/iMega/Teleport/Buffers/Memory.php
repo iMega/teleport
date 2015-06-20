@@ -15,34 +15,57 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace iMega\Teleport\Parser;
+namespace iMega\Teleport\Buffers;
 
-trait Attribute
+use iMega\Teleport\BufferInterface;
+
+/**
+ * Class Memory
+ */
+class Memory implements BufferInterface
 {
     /**
-     * Send event
-     *
-     * @param array $data Data of record.
+     * @var array
      */
-    abstract public function event(array $data);
+    protected $data = array();
 
     /**
-     * Аттрибут предложений "Содержит только изменения"
-     *
-     * @param string $element Element name.
+     * @var array
      */
-    private function attrChanges($element)
+    protected $values = array();
+
+    /**
+     * @return array
+     */
+    public function keys()
     {
-
-        $value = $this->xml->elements($element);
-        if (empty($value)) {
-            return;
-        }
-        $attrs = $value[0]->attribute();
-
-        $this->event([
-            'entityType' => self::KEY_SETS,
-            'changes'    => isset($attrs[Description::CONTAINS_ONLY_THE_CHANGES]),
-        ]);
+        return $this->data;
     }
-}
+
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function get($key)
+    {
+        return $this->data[$key];
+    }
+
+    /**
+     * @param string $key
+     * @param mixed  $value
+     */
+    public function set($key, $value)
+    {
+        $this->data[$key][] = $value;
+    }
+
+    /**
+     * @param $key
+     */
+    public function clear($key)
+    {
+        $this->data[$key] = [];
+    }
+} 

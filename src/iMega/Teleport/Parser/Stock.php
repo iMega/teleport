@@ -17,11 +17,12 @@
  */
 namespace iMega\Teleport\Parser;
 
+use iMega\Teleport\Exception\NotExistElementException;
 use iMega\WalkerXML\WalkerXML;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use iMega\Teleport\Events\ParseStock;
 use iMega\Teleport\StringsTools;
-use Teleport\Controller\Events;
+use iMega\Teleport\Events;
 
 /**
  * Class Stock
@@ -31,10 +32,10 @@ class Stock
     use Attribute;
 
     const KEY_GROUPS = 1,
-        KEY_PROP     = 10,
-        KEY_PROD     = 20,
-        KEY_MISC     = 30,
-        KEY_SETS     = 40;
+          KEY_PROP   = 10,
+          KEY_PROD   = 20,
+          KEY_MISC   = 30,
+          KEY_SETS   = 40;
 
     /**
      * @var EventDispatcherInterface
@@ -80,6 +81,9 @@ class Stock
         $catalog = $this->xml->elements(
             Description::CATALOG
         );
+        if (empty($catalog)) {
+            throw new NotExistElementException('Need ID catalog');
+        }
         $catalogId = $catalog[0]->value(Description::ID);
         $products = $this->xml->elements(
             Description::CATALOG,
@@ -88,6 +92,7 @@ class Stock
         );
         $this->createProducts($products, $catalogId);
 
+        $this->dispatcher->dispatch(Events::BUFFER_PARSE_STOCK_END, null);
     }
 
     /**
@@ -354,17 +359,7 @@ class Stock
     {
         $this->dispatcher->dispatch(
             Events::BUFFER_PARSE_STOCK,
-            new ParseStock($this->json($data))
+            new ParseStock($data)
         );
-    }
-
-    /**
-     * @param array $data The data being encoded.
-     *
-     * @return string
-     */
-    private function json(array $data)
-    {
-        return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 }

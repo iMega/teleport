@@ -17,10 +17,12 @@
  */
 namespace iMega\Teleport;
 
+use iMega\Teleport\Parser\Stock;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 
 /**
  * Class Controller
@@ -39,13 +41,15 @@ class MainController implements ControllerProviderInterface
         $c = $app['controllers_factory'];
         $c->get("/checkauth", array($this, 'checkauth'))->bind('checkauth');
         $c->get("/init", array($this, 'init'))->bind('init');
-        $c->get("/file", array($this, 'acceptFile'))->bind('acceptFile');
+        $c->post("/file", array($this, 'acceptFile'))->bind('acceptFile');
         $c->get("/import", array($this, 'import'))->bind('import');
 
         return $c;
     }
 
     /**
+     * The cap of request on checkauth :)
+     *
      * @return Response
      */
     public function checkauth()
@@ -54,29 +58,59 @@ class MainController implements ControllerProviderInterface
     }
 
     /**
+     * Send params for session
+     *
      * @return Response
      */
     public function init()
     {
-        return new Response("zip=no\nfile_limit=2000000", Response::HTTP_OK);
+        return new Response("zip=no\nfile_limit=2000000\n", Response::HTTP_OK);
     }
 
     /**
+     * Accept files
+     *
      * @param Request $request
      *
      * @return bool
      */
-    public function acceptFile(Request $request)
+    public function acceptFile(Application $app, Request $request)
     {
-        echo "file\n";
+        $filename = $request->get('filename');
+        $data = $request->getContent();
+        /**
+         * @var \iMega\Teleport\StorageInterface $storage
+         */
+        $storage = $app['storage'];
+        $result = file_put_contents('gaufrette://teleport/'.$filename, $data, FILE_APPEND);
 
-        return true;
+        if (false === $result) {
+            return new Response("failure\n", Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return new Response("success\n", Response::HTTP_OK);
     }
 
-    public function import(Request $request)
+    /**
+     * Kick me!
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function import(Application $app, Request $request)
     {
-        echo "import\n";
+        $filename = $request->get('filename');
+        /**
+         * @var \iMega\Teleport\StorageInterface $storage
+         */
+        $storage = $app['storage'];
 
-        return true;
+        $stock = new Stock($storage->read($filename), $app['dispatcher']);
+        $stock->parse();
+
+        //$storage->delete($filename);
+
+        return new Response("success\n", Response::HTTP_OK);
     }
 }

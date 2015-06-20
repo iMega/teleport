@@ -19,13 +19,25 @@ namespace iMega\CMS;
 
 use iMega\CMS\Security\User\Provider\WordpressUserProvider;
 
+/**
+ * Class Wordpress
+ */
 class Wordpress implements CmsInterface
 {
     protected $mnemo = 'IMEGATELEPORT';
 
+    /**
+     * Construct. trailing slash.
+     */
     public function __construct()
     {
-
+        if (array_key_exists('DOCUMENT_URI', $_SERVER) &&
+            !empty($_SERVER['DOCUMENT_URI']) &&
+            $_SERVER['DOCUMENT_URI'] == '/1c_exchange.php'
+        ) {
+            $_SERVER['REQUEST_URI'] = $_SERVER['DOCUMENT_URI'] . '/?' . $_SERVER['QUERY_STRING'];
+            $_SERVER['SCRIPT_NAME'] = '/1c_exchange.php/index.php';
+        }
     }
 
     /**
@@ -91,8 +103,9 @@ class Wordpress implements CmsInterface
      */
     public function storage()
     {
+        $uploadDir = wp_upload_dir();
         return [
-            'storage.path' => wp_upload_dir(),
+            'storage.path' => $uploadDir['basedir'] . '/teleport',
         ];
     }
 

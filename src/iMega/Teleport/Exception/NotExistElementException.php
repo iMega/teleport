@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace iMega\Teleport;
+namespace iMega\Teleport\Exception;
 
-interface BufferInterface
+/**
+ * Class NotExistElementException
+ */
+class NotExistElementException extends \RuntimeException
 {
-    public function keys();
-    public function set($id, $value);
-    public function get($id);
-    public function clear($key);
+
 }

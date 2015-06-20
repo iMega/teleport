@@ -17,10 +17,35 @@
  */
 namespace iMega\Teleport;
 
-interface BufferInterface
+
+interface StorageInterface
 {
-    public function keys();
-    public function set($id, $value);
-    public function get($id);
-    public function clear($key);
+    /**
+     * Deletes the file matching the specified key
+     *
+     * @param  string $resource
+     *
+     * @return bool
+     */
+    public function delete($resource);
+
+    /**
+     * Reads the content from the file
+     *
+     * @param string $resource
+     *
+     * @return string
+     */
+    public function read($resource);
+
+    /**
+     * Writes the given content into the file
+     *
+     * @param $resource
+     * @param $data
+     * @param $overwrite
+     *
+     * @return integer The number of bytes that were written into the file
+     */
+    public function write($resource, $data, $overwrite);
 }

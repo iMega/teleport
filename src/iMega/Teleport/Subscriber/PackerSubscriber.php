@@ -26,19 +26,33 @@ use iMega\Teleport\Events;
 /**
  * Class BufferSubscriber
  */
-class BufferSubscriber implements EventSubscriberInterface
+class PackerSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var array
+     */
+    protected $len = [];
+
     /**
      * @var BufferInterface
      */
     private $buffer;
 
     /**
-     * @param BufferInterface $buffer Buffer.
+     * Max length the pack
+     *
+     * @var int
      */
-    public function __construct(BufferInterface $buffer)
+    protected $packSize;
+
+    /**
+     * @param BufferInterface $buffer
+     * @param int             $packSize
+     */
+    public function __construct(BufferInterface $buffer, $packSize)
     {
-        $this->buffer = $buffer;
+        $this->buffer   = $buffer;
+        $this->packSize = $packSize;
     }
 
     /**
@@ -49,18 +63,48 @@ class BufferSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            Events::BUFFER_PARSE_STOCK => ['parseStock', 200],
+            Events::BUFFER_PARSE_STOCK     => ['packStock', 100],
+            Events::BUFFER_PARSE_STOCK_END => ['packStockEnd', 200],
         );
     }
 
     /**
-     * @param ParseStock $event
+     * Handler event parse stock
+     *
+     * @param ParseStock $event Data in event.
      */
-    public function parseStock(ParseStock $event)
+    public function packStock(ParseStock $event)
     {
         $data = $event->getData();
+        $this->len[$data['entityType']] += mb_strlen($this->json($data));
+        if ($this->packSize <= $this->len[$data['entityType']]) {
+            $this->packData($data['entityType']);
+        }
+    }
 
-        $this->buffer->set($data['entityType'], $this->json($data));
+    /**
+     * Handler event parse stock end
+     */
+    public function packStockEnd()
+    {
+        $keys = $this->buffer->keys();
+        foreach ($keys as $key) {
+            $this->packData($key);
+        }
+    }
+
+    /**
+     * Pack data and to send in mapper
+     *
+     * @param $key
+     */
+    private function packData($key)
+    {
+        $records = $this->buffer->get($key);
+        foreach ($records as $record) {
+            //mapper
+        }
+        $this->buffer->clear($key);
     }
 
     /**

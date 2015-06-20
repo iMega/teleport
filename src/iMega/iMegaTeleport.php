@@ -18,6 +18,7 @@
 namespace iMega;
 
 use iMega\CMS\CmsInterface;
+use iMega\Teleport\Subscriber\BufferSubscriber;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use iMega\Teleport\Subscriber\RequestSubscriber;
@@ -28,7 +29,7 @@ use iMega\Teleport\Subscriber\RequestSubscriber;
 class iMegaTeleport
 {
     /**
-     * @param CmsInterface $cms
+     * @param CmsInterface $cms Interface cms.
      */
     public function __construct(CmsInterface $cms)
     {
@@ -42,6 +43,7 @@ class iMegaTeleport
 
         $app['debug'] = true;
         $app['dispatcher']->addSubscriber(new RequestSubscriber($app));
+        $app['dispatcher']->addSubscriber(new BufferSubscriber($app['buffer']));
 
         $app->register(new \Silex\Provider\SecurityServiceProvider());
         $app['security.authentication_provider.dao._proto'] = $app->protect(function ($name) use ($app, $cms) {
@@ -62,7 +64,6 @@ class iMegaTeleport
             $app->mount($prefix, $controller);
         }
         $request = Request::createFromGlobals();
-
         if (0 === strpos($request->getBaseUrl(), '/1c_exchange.php')) {
             $app->run();
         }

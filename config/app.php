@@ -23,4 +23,7 @@ return [
     'buffer' => function () {
         return new \iMega\Teleport\Buffers\Memory();
     },
+    'mapper' => function (Application $app) {
+        return new iMega\Teleport\Mapper\Mysqlnd($app['db.options']);
+    }
 ];

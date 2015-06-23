@@ -17,6 +17,8 @@
  */
 namespace iMega\Teleport\Subscriber;
 
+use iMega\Teleport\Mapper\Map;
+use iMega\Teleport\MapperInterface;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use iMega\Teleport\Events\ParseStock;
@@ -36,7 +38,12 @@ class PackerSubscriber implements EventSubscriberInterface
     /**
      * @var BufferInterface
      */
-    private $buffer;
+    protected $buffer;
+
+    /**
+     * @var MapperInterface
+     */
+    protected $mapper;
 
     /**
      * Max length the pack
@@ -49,9 +56,10 @@ class PackerSubscriber implements EventSubscriberInterface
      * @param BufferInterface $buffer
      * @param int             $packSize
      */
-    public function __construct(BufferInterface $buffer, $packSize)
+    public function __construct(BufferInterface $buffer, MapperInterface $mapper, $packSize)
     {
         $this->buffer   = $buffer;
+        $this->mapper   = $mapper;
         $this->packSize = $packSize;
     }
 
@@ -101,9 +109,7 @@ class PackerSubscriber implements EventSubscriberInterface
     private function packData($key)
     {
         $records = $this->buffer->get($key);
-        foreach ($records as $record) {
-            //mapper
-        }
+        $this->mapper->query($key, $records);
         $this->buffer->clear($key);
     }
 

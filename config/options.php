@@ -2,8 +2,8 @@
 
 return array(
     'db.options' => array(
-        'driver'     => 'mysql',
-        'host'       => '127.0.0.1',
+        'driver'     => 'mysqli',
+        'host'       => 'teleport_db',
         'dbuser'     => 'root',
         'dbpassword' => '',
         'dbname'     => 'tergum',

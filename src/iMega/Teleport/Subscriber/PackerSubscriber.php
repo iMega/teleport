@@ -84,7 +84,7 @@ class PackerSubscriber implements EventSubscriberInterface
     public function packStock(ParseStock $event)
     {
         $data = $event->getData();
-        $this->len[$data['entityType']] += mb_strlen($this->json($data));
+        $this->addLength($data['entityType'], $data);
         if ($this->packSize <= $this->len[$data['entityType']]) {
             $this->packData($data['entityType']);
         }
@@ -96,7 +96,7 @@ class PackerSubscriber implements EventSubscriberInterface
     public function packStockEnd()
     {
         $keys = $this->buffer->keys();
-        foreach ($keys as $key) {
+        foreach ($keys as $key => $v) {
             $this->packData($key);
         }
     }
@@ -111,6 +111,21 @@ class PackerSubscriber implements EventSubscriberInterface
         $records = $this->buffer->get($key);
         $this->mapper->query($key, $records);
         $this->buffer->clear($key);
+    }
+
+    /**
+     * Add length string
+     *
+     * @param int   $key
+     * @param array $data
+     */
+    private function addLength($key, array $data)
+    {
+        if (array_key_exists($key, $this->len)) {
+            $this->len[$key] += mb_strlen($this->json($data));
+        } else {
+            $this->len[$key] = mb_strlen($this->json($data));
+        }
     }
 
     /**

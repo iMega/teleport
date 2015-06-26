@@ -63,7 +63,6 @@ class Mysqlnd extends \mysqli implements MapperInterface
     private function getValues($key, array $data)
     {
         $result = '';
-        $map = Map::getMap()[$key];
         foreach ($data as $item) {
             $record = json_decode($item);
             foreach (Map::getMap()[$key] as $k) {
@@ -81,7 +80,7 @@ class Mysqlnd extends \mysqli implements MapperInterface
      */
     private function escapeString($value)
     {
-        return '';
+        return $value;
     }
 
     /**

@@ -27,22 +27,22 @@ class Mysqlnd extends \mysqli implements MapperInterface
         );
     }
 
-    public function preQuery($data) {}
+    public function preExecute($data) {}
 
     /**
      * @param int   $key
      * @param array $data
      */
-    public function query($key, array $data)
+    public function execute($key, array $data)
     {
         $values = $this->getValues($key, $data);
         if ($values) {
             $head = $this->getHead($key);
-            $this->execute($head . $values);
+            $this->query($head . $values);
         }
     }
 
-    public function postQuery($data)
+    public function postExecute($data)
     {
 
     }
@@ -107,7 +107,7 @@ class Mysqlnd extends \mysqli implements MapperInterface
      * @throws MySQLiException
      * @return \mysqli_result
      */
-    private function execute($statement, $type = MYSQLI_USE_RESULT)
+    public function query($statement, $type = MYSQLI_USE_RESULT)
     {
         $result = parent::query($statement, $type);
         if (! empty($this->error)) {

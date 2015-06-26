@@ -109,7 +109,7 @@ class PackerSubscriber implements EventSubscriberInterface
     private function packData($key)
     {
         $records = $this->buffer->get($key);
-        $this->mapper->query($key, $records);
+        $this->mapper->execute($key, $records);
         $this->buffer->clear($key);
     }
 

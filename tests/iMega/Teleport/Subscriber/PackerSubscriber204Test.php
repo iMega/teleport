@@ -57,7 +57,7 @@ class PackerSubscriber204Test extends \PHPUnit_Framework_TestCase
 
         $mapperMock = $this->getMockBuilder('iMega\Teleport\Mapper\Mysqlnd')
             ->disableOriginalConstructor()
-            ->setMethods(['query'])
+            ->setMethods(['execute'])
             ->getMock();
 
         $actual = new \iMega\Teleport\Subscriber\PackerSubscriber($buffer, $mapperMock, 999999);
@@ -74,10 +74,10 @@ class PackerSubscriber204Test extends \PHPUnit_Framework_TestCase
         $actual = '';
         $mapperMock = $this->getMockBuilder('iMega\Teleport\Mapper\Mysqlnd')
             ->disableOriginalConstructor()
-            ->setMethods(['query'])
+            ->setMethods(['execute'])
             ->getMock();
         $mapperMock->expects($this->any())
-            ->method('query')
+            ->method('execute')
             ->will(
                 $this->returnCallback(function ($key, $data) use (&$actual) {
                     $actual = $data;
@@ -110,10 +110,10 @@ class PackerSubscriber204Test extends \PHPUnit_Framework_TestCase
         $actual = [];
         $mapperMock = $this->getMockBuilder('iMega\Teleport\Mapper\Mysqlnd')
             ->disableOriginalConstructor()
-            ->setMethods(['query'])
+            ->setMethods(['execute'])
             ->getMock();
         $mapperMock->expects($this->any())
-            ->method('query')
+            ->method('execute')
             ->will(
                 $this->returnCallback(function ($key, $data) use (&$actual) {
                     $actual = array_merge($actual, $data);

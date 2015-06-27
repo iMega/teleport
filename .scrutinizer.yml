@@ -3,7 +3,9 @@ build:
     before:
       - mysql -e "CREATE DATABASE teleport"
       - sed -e 's/{$table_prefix}//g' build/sql/tabs.sql | mysql teleport
-
+  environment:
+    variables:
+      DB_HOST: 127.0.0.1
   tests:
     override:
       -

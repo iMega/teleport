@@ -1,8 +1,13 @@
 build:
-    tests:
-        override:
-            -
-                command: 'phpunit'
-                coverage:
-                    file: './phpunit.xml.dist'
-                    format: 'php-clover'
+  dependencies:
+    before:
+      - mysql -e "CREATE DATABASE teleport"
+      - sed -e 's/{$table_prefix}//g' build/sql/tabs.sql | mysql teleport
+
+  tests:
+    override:
+      -
+        command: 'phpunit'
+        coverage:
+          file: './phpunit.xml.dist'
+          format: 'php-clover'

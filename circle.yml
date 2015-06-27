@@ -12,6 +12,8 @@ dependencies:
     - docker build -f teleport.docker -t imega/teleport .
     - mkdir -p ./build/db
     - docker run -d --name "teleport_db" -v $PWD/build/db:/var/lib/mysql imega/mysql
+    - mysql -e "CREATE DATABASE teleport"
+    - mysql teleport < build/sql/tabs.sql
     - docker run --link teleport_db:teleport_db imega/mysql-client:1.1.0 mysqladmin --silent --host=teleport_db --wait=5 ping
     - docker run -v $PWD/build/sql:/sql --link teleport_db:teleport_db imega/mysql-client:1.1.0 mysql --host=teleport_db -e "source /sql/teleport.sql"
     - docker run -v $PWD/build/sql:/sql --link teleport_db:teleport_db imega/mysql-client:1.1.0 mysql --host=teleport_db -e "source /sql/teleport_enable.sql"
@@ -22,4 +24,4 @@ dependencies:
 
 test:
   override:
-    - vendor/bin/phpunit
+    - DB_HOST=127.0.0.1 vendor/bin/phpunit

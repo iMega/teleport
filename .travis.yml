@@ -4,7 +4,12 @@ php:
   - 5.5
   - 5.6
 
+env:
+  - DB_HOST=127.0.0.1
+
 before_script:
+  - mysql -e "CREATE DATABASE teleport CHARACTER SET utf8 COLLATE utf8_general_ci"
+  - sed -e 's/{$table_prefix}//g' build/sql/tabs.sql | mysql teleport
   - composer self-update
   - composer install --dev --prefer-source --no-interaction
   - composer dumpautoload

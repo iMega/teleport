@@ -62,7 +62,7 @@ class BufferSubscriber204Test extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function parseStock()
+    public function testParseStock()
     {
         $buffer = new \iMega\Teleport\Buffers\Memory();
 

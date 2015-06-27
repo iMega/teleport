@@ -6,5 +6,10 @@ WORKDIR /data
 
 VOLUME ["/data"]
 
-RUN apk add --update php-dom php-json php-mysqli && \
+RUN apk add --update \
+        php-dom \
+        php-json \
+        php-mysqli \
+        php-pdo_mysql \
+        php-pdo && \
     rm -rf /var/cache/apk/*

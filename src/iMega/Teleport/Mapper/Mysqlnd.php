@@ -17,11 +17,12 @@ class Mysqlnd extends \mysqli implements MapperInterface
      */
     public function __construct(array $options)
     {
+        $this->prefix = $options['prefix'];
         $this->open(
             $options['host'],
-            $options['db'],
             $options['user'],
             $options['pass'],
+            $options['db'],
             $options['port'],
             $options['socket']
         );
@@ -35,6 +36,9 @@ class Mysqlnd extends \mysqli implements MapperInterface
      */
     public function execute($key, array $data)
     {
+        if (!array_key_exists($key, Map::getTables())) {
+            return;
+        }
         $values = $this->getValues($key, $data);
         if ($values) {
             $head = $this->getHead($key);
@@ -56,21 +60,42 @@ class Mysqlnd extends \mysqli implements MapperInterface
 
     /**
      * @param int   $key
-     * @param array $data
+     * @param array $values
      *
      * @return string
      */
-    private function getValues($key, array $data)
+    private function getValues($key, array $values)
     {
-        $result = '';
-        foreach ($data as $item) {
-            $record = json_decode($item);
-            foreach (Map::getMap()[$key] as $k) {
-                $result .= $this->escapeString($record[$k]);
-            }
+        $data = [];
+        foreach ($values as $item) {
+            $data[] = $this->getValue($key, $item);
         }
+        $result = implode(',', $data);
 
         return $result;
+    }
+
+    /**
+     * @param int    $key
+     * @param string $value JSON.
+     *
+     * @return string
+     */
+    private function getValue($key, $value)
+    {
+        $data = [];
+        $record = json_decode($value, true);
+        foreach (Map::getMap()[$key] as $field) {
+            if (array_key_exists($field, $record)) {
+                $res = $record[$field];
+            } else {
+                $res = '';
+            }
+            $data[] = $this->escapeString($res);
+        }
+        $result = implode(',', $data);
+
+        return "($result)";
     }
 
     /**
@@ -80,22 +105,24 @@ class Mysqlnd extends \mysqli implements MapperInterface
      */
     private function escapeString($value)
     {
-        return $value;
+        $result = $this::escape_string($value);
+
+        return "'$result'";
     }
 
     /**
      * Connect to db
      *
-     * @param string $host
-     * @param string $db
-     * @param string $user
-     * @param string $pass
+     * @param string   $host
+     * @param string   $user
+     * @param string   $pass
+     * @param string   $db
      * @param int|null $port
      * @param string|null $socket
      */
-    private function open($host, $db, $user, $pass, $port = null, $socket = null)
+    private function open($host, $user, $pass, $db, $port = null, $socket = null)
     {
-        parent::connect($host, $db, $user, $pass, $port = null, $socket = null);
+        $this::connect($host, $user, $pass, $db, $port = null, $socket = null);
     }
 
     /**
@@ -107,11 +134,11 @@ class Mysqlnd extends \mysqli implements MapperInterface
      * @throws MySQLiException
      * @return \mysqli_result
      */
-    public function query($statement, $type = MYSQLI_USE_RESULT)
+    public function query($queries)
     {
-        $result = parent::query($statement, $type);
+        $result = $this::multi_query($queries);
         if (! empty($this->error)) {
-            throw new MySQLiException('Error: ' . $this->error . "\r\n\t" . 'Statement: ' . $statement, $this->errno);
+            throw new MySQLiException('Error: ' . $this->error . "\r\n\t" . 'Statement: ', $this->errno);
         }
 
         return $result;

@@ -1,5 +1,6 @@
 IMAGES = imega/teleport-test imega/teleport
 CONTAINERS = teleport_db teleport teleport_nginx
+DBHOST = localhost
 
 quick: build test start
 
@@ -59,7 +60,7 @@ clean: stop
 	-docker rm -fv $(CONTAINERS)
 
 test:
-	@docker run --rm -v $(CURDIR):/data imega/teleport-test vendor/bin/phpunit
+	@docker run --rm -v $(CURDIR):/data --env="DB_HOST=$(DBHOST)" imega/teleport-test vendor/bin/phpunit
 
 destroy: clean
 	@docker rmi -f $(IMAGES)

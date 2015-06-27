@@ -47,6 +47,7 @@ final class Map
             Stock::KEY_PROD => [
                 'title',
                 'descr',
+                'excerpt',
                 'guid',
                 'slug',
                 'catalog_guid',
@@ -64,7 +65,6 @@ final class Map
                 'valSlug',
                 '_visible',
             ],
-            Stock::KEY_SETS => [],
             Offers::KEY_OFFERS => [
                 'guid',
                 'prod_guid',
@@ -104,14 +104,13 @@ final class Map
     public static function getTables()
     {
         return [
-            Stock::KEY_GROUPS => '',
-            Stock::KEY_PROP => '',
-            Stock::KEY_PROD => '',
-            Stock::KEY_MISC => '',
-            Stock::KEY_SETS => '',
-            Offers::KEY_OFFERS => '',
-            Offers::KEY_FEATURES => '',
-            Offers::KEY_PRICES => '',
+            Stock::KEY_GROUPS    => 'imega_groups',
+            Stock::KEY_PROP      => 'imega_prop',
+            Stock::KEY_PROD      => 'imega_prod',
+            Stock::KEY_MISC      => 'imega_misc',
+            Offers::KEY_OFFERS   => 'imega_offers',
+            Offers::KEY_FEATURES => 'imega_offers_features',
+            Offers::KEY_PRICES   => 'imega_offers_prices',
         ];
     }
 }

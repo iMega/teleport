@@ -11,6 +11,13 @@
          syntaxCheck="false"
          bootstrap="tests/bootstrap.php"
 >
+    <php>
+        <env name="DB_PREFIX" value="" />
+        <env name="DB_NAME" value="teleport" />
+        <env name="DB_USER" value="root" />
+        <env name="DB_PASS" value="" />
+    </php>
+
     <testsuites>
         <testsuite name="iMega Teleport Test Suite">
             <directory>./tests</directory>

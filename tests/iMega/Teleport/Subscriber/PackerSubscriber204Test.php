@@ -67,7 +67,7 @@ class PackerSubscriber204Test extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function PackStock()
+    public function testPackStock()
     {
         $buffer = new \iMega\Teleport\Buffers\Memory();
 

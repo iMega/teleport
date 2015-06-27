@@ -155,7 +155,6 @@ class Stock
     private function createProduct(WalkerXML $product, $catalogId)
     {
         $id   = $product->value(Description::ID);
-        $id   = substr($id, 0, 36);
         $name = $product->value(Description::NAME);
 
         $this->event([

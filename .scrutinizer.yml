@@ -1,7 +1,7 @@
 build:
   dependencies:
     before:
-      - mysql -e "CREATE DATABASE teleport"
+      - mysql -e "CREATE DATABASE teleport CHARACTER SET utf8 COLLATE utf8_general_ci"
       - sed -e 's/{$table_prefix}//g' build/sql/tabs.sql | mysql teleport
   environment:
     variables:

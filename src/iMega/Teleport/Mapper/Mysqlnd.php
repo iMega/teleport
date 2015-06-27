@@ -123,6 +123,7 @@ class Mysqlnd extends \mysqli implements MapperInterface
     private function open($host, $user, $pass, $db, $port = null, $socket = null)
     {
         $this::connect($host, $user, $pass, $db, $port = null, $socket = null);
+        $this->set_charset('utf8');
     }
 
     /**

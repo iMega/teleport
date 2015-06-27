@@ -45,7 +45,7 @@ class Mysqlnd204Test extends \PHPUnit_Extensions_Database_TestCase
 
     public function getConnection()
     {
-        $dsn = 'mysql:dbname=teleport;host='.getenv('DB_HOST');
+        $dsn = 'mysql:dbname=teleport;host='.getenv('DB_HOST').';charset=UTF8';
         $pdo = new \PDO($dsn, 'root');
         return $this->createDefaultDBConnection($pdo, $_ENV["DB_NAME"]);
     }

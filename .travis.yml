@@ -5,8 +5,7 @@ php:
   - 5.6
 
 env:
-  - DB_HOST=127.0.0.1
-  - BASE_URL=http://demo-teleport.imega.ru:8082
+  - DB_HOST=127.0.0.1 BASE_URL="http://demo-teleport.imega.ru:8082"
 
 before_script:
   - mysql -e "CREATE DATABASE teleport CHARACTER SET utf8 COLLATE utf8_general_ci"

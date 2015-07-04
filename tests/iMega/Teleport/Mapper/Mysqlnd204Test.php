@@ -69,13 +69,13 @@ class Mysqlnd204Test extends \PHPUnit_Extensions_Database_TestCase
         $queries = $fs->read('tabs.sql');
 
         $this->mapper = new \iMega\Teleport\Mapper\Mysqlnd([
-            'host'   => getenv('DB_HOST'),
-            'prefix' => $_ENV["DB_PREFIX"],
-            'db'     => $_ENV["DB_NAME"],
-            'user'   => $_ENV["DB_USER"],
-            'pass'   => $_ENV["DB_PASS"],
-            'port'   => null,
-            'socket' => null
+            'host'     => getenv('DB_HOST'),
+            'prefix'   => $_ENV["DB_PREFIX"],
+            'name'     => $_ENV["DB_NAME"],
+            'user'     => $_ENV["DB_USER"],
+            'password' => $_ENV["DB_PASS"],
+            'port'     => null,
+            'socket'   => null
         ]);
 
         $queries = str_replace('{$table_prefix}', $_ENV["DB_PREFIX"], $queries);
@@ -99,13 +99,13 @@ class Mysqlnd204Test extends \PHPUnit_Extensions_Database_TestCase
     public function testExecute()
     {
         $mapper = new \iMega\Teleport\Mapper\Mysqlnd([
-            'host'   => getenv('DB_HOST'),
-            'prefix' => $_ENV["DB_PREFIX"],
-            'db'     => $_ENV["DB_NAME"],
-            'user'   => $_ENV["DB_USER"],
-            'pass'   => $_ENV["DB_PASS"],
-            'port'   => null,
-            'socket' => null
+            'host'     => getenv('DB_HOST'),
+            'prefix'   => $_ENV["DB_PREFIX"],
+            'name'     => $_ENV["DB_NAME"],
+            'user'     => $_ENV["DB_USER"],
+            'password' => $_ENV["DB_PASS"],
+            'port'     => null,
+            'socket'   => null
         ]);
 
         $simpleData = explode("\n", $this->data);

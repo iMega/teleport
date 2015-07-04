@@ -57,6 +57,8 @@ class Offers
      */
     public function parse()
     {
+        $this->dispatcher->dispatch(Events::BUFFER_PARSE_OFFERS_PRE, null);
+
         $this->attrChanges(Description::PACKAGEOFFERS);
 
         $offers = $this->xml->elements(
@@ -65,6 +67,8 @@ class Offers
             Description::OFFER
         );
         $this->createOffers($offers);
+
+        $this->dispatcher->dispatch(Events::BUFFER_PARSE_OFFERS_END, null);
     }
 
     /**

@@ -62,6 +62,8 @@ class Stock
      */
     public function parse()
     {
+        $this->dispatcher->dispatch(Events::BUFFER_PARSE_STOCK_PRE, null);
+
         $this->attrChanges(Description::CATALOG);
 
         $groups = $this->xml->elements(

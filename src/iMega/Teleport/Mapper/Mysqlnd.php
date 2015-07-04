@@ -21,14 +21,22 @@ class Mysqlnd extends \mysqli implements MapperInterface
         $this->open(
             $options['host'],
             $options['user'],
-            $options['pass'],
-            $options['db'],
+            $options['password'],
+            $options['name'],
             $options['port'],
             $options['socket']
         );
     }
 
-    public function preExecute($data) {}
+    /**
+     * @param string $data Mysql query.
+     *
+     * @throws MySQLiException
+     */
+    public function preExecute($data)
+    {
+        $this->query($data);
+    }
 
     /**
      * @param int   $key
@@ -46,9 +54,14 @@ class Mysqlnd extends \mysqli implements MapperInterface
         }
     }
 
+    /**
+     * @param string $data Mysql query.
+     *
+     * @throws MySQLiException
+     */
     public function postExecute($data)
     {
-
+        $this->query($data);
     }
 
     private function getHead($key)
@@ -138,6 +151,12 @@ class Mysqlnd extends \mysqli implements MapperInterface
     public function query($queries)
     {
         $result = $this::multi_query($queries);
+        while ($this->more_results() && $this->next_result()) {
+            $mysqliResult = $this->use_result();
+            if ($mysqliResult instanceof \mysqli_result) {
+                $mysqliResult->free();
+            }
+        }
         if (! empty($this->error)) {
             throw new MySQLiException('Error: ' . $this->error . "\r\n\t" . 'Statement: ', $this->errno);
         }

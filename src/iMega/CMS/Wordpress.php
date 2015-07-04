@@ -18,6 +18,8 @@
 namespace iMega\CMS;
 
 use iMega\CMS\Security\User\Provider\WordpressUserProvider;
+use iMega\CMS\Subscriber\WordpressSubscriber;
+use Silex\Application;
 
 /**
  * Class Wordpress
@@ -78,7 +80,7 @@ class Wordpress implements CmsInterface
     {
         $config = [];
 
-        $keys = array('user', 'password', 'host', 'port', 'socket');
+        $keys = array('name', 'user', 'password', 'host', 'port', 'socket', 'prefix');
         foreach ($keys as $key) {
             $value = null;
             $constName = strtoupper('DB_'.$key);
@@ -93,7 +95,7 @@ class Wordpress implements CmsInterface
             }
         }
 
-        return $config['db.options'];
+        return $config;
     }
 
     /**
@@ -106,6 +108,20 @@ class Wordpress implements CmsInterface
         $uploadDir = wp_upload_dir();
         return [
             'storage.path' => $uploadDir['basedir'] . '/teleport',
+        ];
+    }
+
+    /**
+     * Возвращает подписчиков событий
+     *
+     * @param Application $app Приложение.
+     *
+     * @return array
+     */
+    public function subscribers(Application $app)
+    {
+        return [
+            new WordpressSubscriber($app['mapper'], $app['resources'], $app['db.options']['prefix']),
         ];
     }
 

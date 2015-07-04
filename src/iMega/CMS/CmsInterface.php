@@ -17,6 +17,8 @@
  */
 namespace iMega\CMS;
 
+use Silex\Application;
+
 interface CmsInterface
 {
     /**
@@ -38,4 +40,11 @@ interface CmsInterface
      * @return array
      */
     public function storage();
+
+    /**
+     * @param Application $app Приложение.
+     *
+     * @return array
+     */
+    public function subscribers(Application $app);
 }

@@ -109,7 +109,7 @@ class MainController implements ControllerProviderInterface
         $stock = new Stock($storage->read($filename), $app['dispatcher']);
         $stock->parse();
 
-        //$storage->delete($filename);
+        $storage->delete($filename);
 
         return new Response("success\n", Response::HTTP_OK);
     }

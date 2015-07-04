@@ -22,8 +22,10 @@ namespace iMega\Teleport;
  */
 final class Events
 {
-    const BUFFER_PARSE_STOCK      = 'buffer.parse.stock',
+    const BUFFER_PARSE_STOCK_PRE  = 'buffer.parse.stock.pre',
+          BUFFER_PARSE_STOCK      = 'buffer.parse.stock',
           BUFFER_PARSE_STOCK_END  = 'buffer.parse.stock.end',
+          BUFFER_PARSE_OFFERS_PRE = 'buffer.parse.offers.pre',
           BUFFER_PARSE_OFFERS     = 'buffer.parse.offers',
           BUFFER_PARSE_OFFERS_END = 'buffer.parse.offers.end';
 }

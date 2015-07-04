@@ -20,6 +20,10 @@ return [
         Gaufrette\StreamWrapper::register();
         return $fs;
     },
+    'resources' => function () {
+        $adapter = new Gaufrette\Adapter\Local(__DIR__ . '/../resources');
+        return new Gaufrette\Filesystem($adapter);
+    },
     'buffer' => function () {
         return new \iMega\Teleport\Buffers\Memory();
     },

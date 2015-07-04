@@ -48,6 +48,7 @@ class FunctionalTest extends \PHPUnit_Framework_TestCase
         curl_setopt($this->connector, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->connector, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($this->connector, CURLOPT_USERAGENT, '1C+Enterprise/8.2');
+        curl_setopt($this->connector, CURLOPT_USERPWD, "irvis:111111");
     }
 
     /**
@@ -64,7 +65,62 @@ class FunctionalTest extends \PHPUnit_Framework_TestCase
     public function testCheckauth()
     {
         curl_setopt($this->connector, CURLOPT_URL, getenv("BASE_URL") . "/1c_exchange.php?type=catalog&mode=checkauth");
-        curl_setopt($this->connector, CURLOPT_USERPWD, "irvis:111111");
+        $response = curl_exec($this->connector);
+
+        $this->assertEquals("success\n", $response);
+    }
+
+    /**
+     * @test
+     */
+    public function testInit()
+    {
+        curl_setopt($this->connector, CURLOPT_URL, getenv("BASE_URL") . "/1c_exchange.php?type=catalog&mode=init");
+        $response = curl_exec($this->connector);
+
+        $this->assertEquals("zip=no\nfile_limit=2000000\n", $response);
+    }
+
+    /**
+     * @test
+     */
+    public function testFileImport()
+    {
+        $adapter = new Gaufrette\Adapter\Local(__DIR__.'/../../Fixtures/2.04');
+        $fs = new Gaufrette\Filesystem($adapter);
+        $importFile = $fs->read('import.xml');
+
+        curl_setopt($this->connector, CURLOPT_URL, getenv("BASE_URL") . "/1c_exchange.php?type=catalog&mode=file&filename=import.xml");
+        curl_setopt($this->connector, CURLOPT_POSTFIELDS, $importFile);
+        curl_setopt($this->connector, CURLOPT_POST, true);
+        $response = curl_exec($this->connector);
+
+        $this->assertEquals("success\n", $response);
+    }
+
+    /**
+     * @test
+     */
+    public function testFileOffers()
+    {
+        $adapter = new Gaufrette\Adapter\Local(__DIR__.'/../../Fixtures/2.04');
+        $fs = new Gaufrette\Filesystem($adapter);
+        $offersFile = $fs->read('offers.xml');
+
+        curl_setopt($this->connector, CURLOPT_URL, getenv("BASE_URL") . "/1c_exchange.php?type=catalog&mode=file&filename=offers.xml");
+        curl_setopt($this->connector, CURLOPT_POSTFIELDS, $offersFile);
+        curl_setopt($this->connector, CURLOPT_POST, true);
+        $response = curl_exec($this->connector);
+
+        $this->assertEquals("success\n", $response);
+    }
+
+    /**
+     * @test
+     */
+    public function testImport()
+    {
+        curl_setopt($this->connector, CURLOPT_URL, getenv("BASE_URL") . "/1c_exchange.php?type=catalog&mode=import&filename=import.xml");
         $response = curl_exec($this->connector);
 
         $this->assertEquals("success\n", $response);

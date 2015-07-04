@@ -3,6 +3,7 @@ CONTAINERS = teleport_db teleport teleport_nginx
 DBHOST = localhost
 PORT = 80
 BASEURL = localhost
+MYSQL_PORTS = "-p 3306:3306"
 
 quick: build test start
 
@@ -14,7 +15,7 @@ build:
 start:
 	@mkdir -p $(CURDIR)/build/db
 
-	@docker run -d --name "teleport_db" -v $(CURDIR)/build/db:/var/lib/mysql -p 3306:3306 imega/mysql
+	@docker run -d --name "teleport_db" -v $(CURDIR)/build/db:/var/lib/mysql $(MYSQL_PORTS) imega/mysql
 
 	@docker run --rm \
 		-v $(CURDIR)/build/sql:/sql \

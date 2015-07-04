@@ -24,4 +24,4 @@ dependencies:
 
 test:
   override:
-    - DB_HOST=127.0.0.1 vendor/bin/phpunit
+    - DB_HOST=127.0.0.1 BASE_URL=127.0.0.1 vendor/bin/phpunit

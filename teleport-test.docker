@@ -11,5 +11,6 @@ RUN apk add --update \
         php-json \
         php-mysqli \
         php-pdo_mysql \
-        php-pdo && \
+        php-pdo \
+        php-curl && \
     rm -rf /var/cache/apk/*

@@ -1,6 +1,8 @@
 IMAGES = imega/teleport-test imega/teleport
 CONTAINERS = teleport_db teleport teleport_nginx
 DBHOST = localhost
+PORT = 80
+BASEURL = localhost
 
 quick: build test start
 
@@ -45,7 +47,7 @@ start:
 		-v $(CURDIR)/build/sites-enabled:/etc/nginx/sites-enabled \
 		-v $(CURDIR)/build/conf.d:/etc/nginx/conf.d \
 		-v $(CURDIR)/build/entrypoints/teleport-nginx.sh:/teleport-nginx.sh \
-		-p 80:80 \
+		-p $(PORT):80 \
 		--entrypoint=/teleport-nginx.sh \
 		leanlabs/nginx
 
@@ -60,7 +62,7 @@ clean: stop
 	-docker rm -fv $(CONTAINERS)
 
 test:
-	@docker run --rm -v $(CURDIR):/data --env="DB_HOST=$(DBHOST)" imega/teleport-test vendor/bin/phpunit
+	@docker run --rm -v $(CURDIR):/data --env="DB_HOST=$(DBHOST)" --env="BASE_URL=$(BASEURL)" imega/teleport-test vendor/bin/phpunit
 
 destroy: clean
 	@docker rmi -f $(IMAGES)

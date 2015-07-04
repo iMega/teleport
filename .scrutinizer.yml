@@ -6,6 +6,7 @@ build:
   environment:
     variables:
       DB_HOST: 127.0.0.1
+      BASE_URL: "http://demo-teleport.imega.ru"
   tests:
     override:
       -

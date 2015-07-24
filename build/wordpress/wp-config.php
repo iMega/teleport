@@ -4,6 +4,7 @@ define('DB_USER', 'root');
 define('DB_PASSWORD', 'empty');
 define('DB_HOST', 'teleport_db');
 define('DB_CHARSET', 'utf8');
+define('DB_PREFIX', 'wp_');
 define('DB_COLLATE', '');
 define('AUTH_KEY',         'put your unique phrase here');
 define('SECURE_AUTH_KEY',  'put your unique phrase here');

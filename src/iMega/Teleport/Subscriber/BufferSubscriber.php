@@ -19,7 +19,6 @@ namespace iMega\Teleport\Subscriber;
 
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use iMega\Teleport\Events\ParseStock;
 use iMega\Teleport\BufferInterface;
 use iMega\Teleport\Events;
 
@@ -49,14 +48,25 @@ class BufferSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            Events::BUFFER_PARSE_STOCK => ['parseStock', 200],
+            Events::BUFFER_PARSE_STOCK  => ['parseStock', 200],
+            Events::BUFFER_PARSE_OFFERS => ['parseOffers', 200],
         );
     }
 
     /**
-     * @param ParseStock $event
+     * @param Events\ParseStock $event
      */
-    public function parseStock(ParseStock $event)
+    public function parseStock(Events\ParseStock $event)
+    {
+        $data = $event->getData();
+
+        $this->buffer->set($data['entityType'], $this->json($data));
+    }
+
+    /**
+     * @param Events\ParseOffer $event
+     */
+    public function parseOffers(Events\ParseOffer $event)
     {
         $data = $event->getData();
 

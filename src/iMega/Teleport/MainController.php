@@ -17,6 +17,7 @@
  */
 namespace iMega\Teleport;
 
+use iMega\Teleport\Parser\Offers;
 use iMega\Teleport\Parser\Stock;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
@@ -106,10 +107,17 @@ class MainController implements ControllerProviderInterface
          */
         $storage = $app['storage'];
 
-        $stock = new Stock($storage->read($filename), $app['dispatcher']);
-        $stock->parse();
+        $app['dispatcher']->dispatch(Events::BUFFER_PARSE_START, null);
 
-        $storage->delete($filename);
+        $stock = new Stock($storage->read('import.xml'), $app['dispatcher']);
+        $stock->parse();
+        $storage->delete('import.xml');
+
+        $offers = new Offers($storage->read('offers.xml'), $app['dispatcher']);
+        $offers->parse();
+        $storage->delete('offers.xml');
+
+        $app['dispatcher']->dispatch(Events::BUFFER_PARSE_END, null);
 
         return new Response("success\n", Response::HTTP_OK);
     }

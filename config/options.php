@@ -8,6 +8,7 @@ return array(
         'password' => '',
         'name'     => 'teleport',
         'charset'  => 'UTF8',
+        'prefix'   => 'wp_',
     ),
     'dataPath' => __DIR__ . '/data',
 );

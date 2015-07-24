@@ -15,19 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace iMega\Teleport;
+namespace iMega\Teleport\Events;
 
 /**
- * Class Events
+ * Class ParseStock
  */
-final class Events
+class ParseOffer extends ParseDefault
 {
-    const BUFFER_PARSE_END        = 'buffer.parse.end',
-          BUFFER_PARSE_START      = 'buffer.parse.start',
-          BUFFER_PARSE_STOCK_PRE  = 'buffer.parse.stock.pre',
-          BUFFER_PARSE_STOCK      = 'buffer.parse.stock',
-          BUFFER_PARSE_STOCK_END  = 'buffer.parse.stock.end',
-          BUFFER_PARSE_OFFERS_PRE = 'buffer.parse.offers.pre',
-          BUFFER_PARSE_OFFERS     = 'buffer.parse.offers',
-          BUFFER_PARSE_OFFERS_END = 'buffer.parse.offers.end';
+
 }

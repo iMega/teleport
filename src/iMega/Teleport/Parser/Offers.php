@@ -19,7 +19,7 @@ namespace iMega\Teleport\Parser;
 
 use iMega\WalkerXML\WalkerXML;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use iMega\Teleport\Events\ParseStock;
+use iMega\Teleport\Events\ParseOffer;
 use iMega\Teleport\StringsTools;
 use iMega\Teleport\Events;
 
@@ -78,6 +78,7 @@ class Offers
      */
     private function createOffers(array $offers)
     {
+
         foreach ($offers as $offer) {
             /**
              * @var WalkerXML $offer
@@ -85,7 +86,6 @@ class Offers
             $id       = $offer->value(Description::ID);
             $baseUnit = $offer->value(Description::BASEUNIT);
 
-            $attrUnit = array();
             if ($baseUnit) {
                 $units = $offer->elements(Description::BASEUNIT);
             }
@@ -181,18 +181,8 @@ class Offers
     public function event(array $data)
     {
         $this->dispatcher->dispatch(
-            Events::BUFFER_PARSE_STOCK,
-            new ParseStock($this->json($data))
+            Events::BUFFER_PARSE_OFFERS,
+            new ParseOffer($data)
         );
-    }
-
-    /**
-     * @param array $data The data being encoded.
-     *
-     * @return string
-     */
-    private function json(array $data)
-    {
-        return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 }

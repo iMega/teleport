@@ -21,7 +21,6 @@ use iMega\Teleport\Mapper\Map;
 use iMega\Teleport\MapperInterface;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use iMega\Teleport\Events\ParseStock;
 use iMega\Teleport\BufferInterface;
 use iMega\Teleport\Events;
 
@@ -71,17 +70,19 @@ class PackerSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            Events::BUFFER_PARSE_STOCK     => ['packStock', 100],
-            Events::BUFFER_PARSE_STOCK_END => ['packStockEnd', 200],
+            Events::BUFFER_PARSE_STOCK      => ['packStock', 100],
+            Events::BUFFER_PARSE_STOCK_END  => ['packStockEnd', 200],
+            Events::BUFFER_PARSE_OFFERS     => ['packOffer', 100],
+            Events::BUFFER_PARSE_OFFERS_END => ['packOfferEnd', 200],
         );
     }
 
     /**
      * Handler event parse stock
      *
-     * @param ParseStock $event Data in event.
+     * @param Events\ParseStock $event Data in event.
      */
-    public function packStock(ParseStock $event)
+    public function packStock(Events\ParseStock $event)
     {
         $data = $event->getData();
         $this->addLength($data['entityType'], $data);
@@ -94,6 +95,31 @@ class PackerSubscriber implements EventSubscriberInterface
      * Handler event parse stock end
      */
     public function packStockEnd()
+    {
+        $keys = $this->buffer->keys();
+        foreach ($keys as $key => $v) {
+            $this->packData($key);
+        }
+    }
+
+    /**
+     * Handler event parse offer
+     *
+     * @param Events\ParseOffer $event Data in event.
+     */
+    public function packOffer(Events\ParseOffer $event)
+    {
+        $data = $event->getData();
+        $this->addLength($data['entityType'], $data);
+        if ($this->packSize <= $this->len[$data['entityType']]) {
+            $this->packData($data['entityType']);
+        }
+    }
+
+    /**
+     * Handler event parse offer end
+     */
+    public function packOfferEnd()
     {
         $keys = $this->buffer->keys();
         foreach ($keys as $key => $v) {

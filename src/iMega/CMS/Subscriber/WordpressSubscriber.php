@@ -63,16 +63,27 @@ class WordpressSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            Events::BUFFER_PARSE_STOCK_PRE => ['parseStockPre', 200],
+            Events::BUFFER_PARSE_START => ['parseStart', 200],
+            Events::BUFFER_PARSE_END   => ['parseEnd', 200],
         );
     }
 
     /**
      * Event
      */
-    public function parseStockPre()
+    public function parseStart()
     {
-        $queries = str_replace('{$table_prefix}', $this->prefix, $this->resources->read('tabs.sql'));
-        $this->mapper->preExecute($queries);
+        $teleport = str_replace('{$table_prefix}', $this->prefix, $this->resources->read('teleport.sql'));
+        $queries  = str_replace('{$table_prefix}', $this->prefix, $this->resources->read('tabs.sql'));
+        $this->mapper->preExecute($teleport . $queries);
+    }
+
+    /**
+     * Event
+     */
+    public function parseEnd()
+    {
+        $queries = str_replace('{$table_prefix}', $this->prefix, $this->resources->read('woocommerce.sql'));
+        $this->mapper->postExecute($queries);
     }
 }

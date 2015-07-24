@@ -26,12 +26,14 @@ start:
 	@docker run --rm \
 		-v $(CURDIR)/build/sql:/sql \
 		--link teleport_db:teleport_db \
+		--log-driver=syslog \
 		imega/mysql-client:1.1.0 \
 		mysql --host=teleport_db -e "source /sql/teleport.sql"
 
 	@docker run -d \
 		--name "teleport" \
 		--link teleport_db:teleport_db \
+		--log-driver=syslog \
 		-v $(CURDIR):/app \
 		-p 9001:9001 \
 		imega/teleport \
@@ -45,6 +47,7 @@ start:
 	@docker run -d \
 		--name teleport_nginx \
 		--link teleport:service \
+		--log-driver=syslog \
 		-v $(CURDIR)/build/sites-enabled:/etc/nginx/sites-enabled \
 		-v $(CURDIR)/build/conf.d:/etc/nginx/conf.d \
 		-v $(CURDIR)/build/entrypoints/teleport-nginx.sh:/teleport-nginx.sh \

@@ -1,5 +1,5 @@
 IMAGES = imega/teleport-test imega/teleport
-CONTAINERS = teleport_db teleport teleport_nginx
+CONTAINERS = teleport_nginx teleport teleport_db
 DBHOST = localhost
 PORT = -p 127.0.0.1:80:80
 BASEURL = localhost

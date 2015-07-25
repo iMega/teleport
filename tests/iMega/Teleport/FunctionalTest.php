@@ -48,7 +48,7 @@ class FunctionalTest extends \PHPUnit_Framework_TestCase
         curl_setopt($this->connector, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->connector, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($this->connector, CURLOPT_USERAGENT, '1C+Enterprise/8.2');
-        curl_setopt($this->connector, CURLOPT_USERPWD, "irvis:111111");
+        curl_setopt($this->connector, CURLOPT_USERPWD, "demo:111111");
     }
 
     /**

@@ -17,8 +17,7 @@
  */
 namespace iMega\Teleport;
 
-use iMega\Teleport\Parser\Offers;
-use iMega\Teleport\Parser\Stock;
+use iMega\Teleport\Parser;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
@@ -109,16 +108,33 @@ class MainController implements ControllerProviderInterface
 
         $app['dispatcher']->dispatch(Events::BUFFER_PARSE_START, null);
 
-        $stock = new Stock($storage->read('import.xml'), $app['dispatcher']);
+        $keyStock = $this->getFileNameSource($storage, Parser\Description::CLASSI);
+        $stock = new Parser\Stock($storage->read($keyStock), $app['dispatcher']);
         $stock->parse();
-        $storage->delete('import.xml');
+        $storage->delete($keyStock);
 
-        $offers = new Offers($storage->read('offers.xml'), $app['dispatcher']);
+        $keyOffer = $this->getFileNameSource($storage, Parser\Description::PACKAGEOFFERS);
+        $offers = new Parser\Offers($storage->read($keyOffer), $app['dispatcher']);
         $offers->parse();
-        $storage->delete('offers.xml');
+        $storage->delete($keyOffer);
 
         $app['dispatcher']->dispatch(Events::BUFFER_PARSE_END, null);
 
         return new Response("success\n", Response::HTTP_OK);
+    }
+
+    private function getFileNameSource($storage, $type)
+    {
+        /**
+         * @var \Gaufrette\Filesystem $storage
+         */
+        foreach ($storage->keys() as $file) {
+            if (strpos($file, '.xml') >= 1) {
+                $res = $storage->read($file);
+                if (mb_strpos($res, $type) > 0) {
+                    return $file;
+                }
+            }
+        }
     }
 }

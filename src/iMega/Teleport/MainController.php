@@ -109,14 +109,19 @@ class MainController implements ControllerProviderInterface
         $app['dispatcher']->dispatch(Events::BUFFER_PARSE_START, null);
 
         $keyStock = $this->getFileNameSource($storage, Parser\Description::CLASSI);
-        $stock = new Parser\Stock($storage->read($keyStock), $app['dispatcher']);
-        $stock->parse();
-        $storage->delete($keyStock);
+        if (!empty($keyStock)) {
+            $stock = new Parser\Stock($storage->read($keyStock), $app['dispatcher']);
+            $stock->parse();
+            $storage->delete($keyStock);
+        }
 
         $keyOffer = $this->getFileNameSource($storage, Parser\Description::PACKAGEOFFERS);
-        $offers = new Parser\Offers($storage->read($keyOffer), $app['dispatcher']);
-        $offers->parse();
-        $storage->delete($keyOffer);
+        if (!empty($keyOffer)) {
+            $offers = new Parser\Offers($storage->read($keyOffer), $app['dispatcher']);
+            $offers->parse();
+            $storage->delete($keyOffer);
+        }
+
 
         $app['dispatcher']->dispatch(Events::BUFFER_PARSE_END, null);
 

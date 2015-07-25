@@ -33,7 +33,6 @@ trait Attribute
      */
     private function attrChanges($element)
     {
-
         $value = $this->xml->elements($element);
         if (empty($value)) {
             return;

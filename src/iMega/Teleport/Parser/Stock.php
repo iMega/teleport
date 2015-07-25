@@ -55,6 +55,10 @@ class Stock
     {
         $this->dispatcher = $dispatcher;
         $this->xml = new WalkerXML($data);
+        if (!empty($this->xml->getNamespaces())) {
+            $this->xml->registerXPathNamespace('1c', $this->xml->getNamespaces()['']);
+            $this->xml->namespace = '1c';
+        }
     }
 
     /**

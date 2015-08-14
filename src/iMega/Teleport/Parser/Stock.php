@@ -141,12 +141,16 @@ class Stock
              */
             $id = $this->createGroup($group, $parent);
 
+            if ($group->getNamespaces()) {
+                $group = new WalkerXML($group->asXML());
+            }
+
             $subGroup = $group->elements(
                 Description::GROUPS,
                 Description::GROUP
             );
 
-            if (null !== $subGroup) {
+            if (!empty($subGroup)) {
                 $this->createGroups($subGroup, $id);
             }
         }

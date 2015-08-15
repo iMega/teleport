@@ -80,12 +80,11 @@ class Stock207Test extends \PHPUnit_Framework_TestCase
             );
 
         $stockMock->parse();
-/*
+
         $adapter = new Gaufrette\Adapter\Local(__DIR__.'/../../../Fixtures/2.07/expected');
         $fs = new Gaufrette\Filesystem($adapter);
         $expected = $fs->read('import.txt');
 
         $this->assertEquals($expected, $actual);
-*/
     }
 }

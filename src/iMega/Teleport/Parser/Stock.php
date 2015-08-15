@@ -30,12 +30,15 @@ use iMega\Teleport\Events;
 class Stock
 {
     use Attribute;
+    use RegisterNamespaceXml;
 
     const KEY_GROUPS = 1,
           KEY_PROP   = 10,
           KEY_PROD   = 20,
           KEY_MISC   = 30,
           KEY_SETS   = 40;
+
+    const LENGTH_SLUG = 199;
 
     /**
      * @var EventDispatcherInterface
@@ -56,8 +59,9 @@ class Stock
         $this->dispatcher = $dispatcher;
         $this->xml = new WalkerXML($data);
         if (!empty($this->xml->getNamespaces())) {
-            $this->xml->registerXPathNamespace('1c', $this->xml->getNamespaces()['']);
-            $this->xml->namespace = '1c';
+            $this->xml->registerXPathNamespace('ones', $this->xml->getNamespaces()['']);
+            $this->xml->namespace = 'ones';
+            $this->xml->root = true;
         }
     }
 
@@ -140,16 +144,11 @@ class Stock
              * @var WalkerXML $group
              */
             $id = $this->createGroup($group, $parent);
-
-            if ($group->getNamespaces()) {
-                $group = new WalkerXML($group->asXML());
-            }
-
+            $this->registerNamespace($group, 'ones');
             $subGroup = $group->elements(
                 Description::GROUPS,
                 Description::GROUP
             );
-
             if (!empty($subGroup)) {
                 $this->createGroups($subGroup, $id);
             }
@@ -172,7 +171,7 @@ class Stock
             'title'        => $name,
             'descr'        => $product->value(Description::DESC),
             'guid'         => $id,
-            'slug'         => StringsTools::t15n($name, '-', 199),
+            'slug'         => StringsTools::t15n($name, '-', self::LENGTH_SLUG),
             'catalog_guid' => $catalogId,
             'article'      => $product->value(Description::ARTICLE),
             'img'          => $product->value(Description::IMAGE),
@@ -184,6 +183,7 @@ class Stock
         );
         $this->createProductsGroup($group, $id);
 
+        $this->registerNamespace($product, 'ones');
         $propertyValues = $product->elements(
             Description::PROPERTYVALUES,
             Description::PROPERTYVALUE
@@ -235,9 +235,9 @@ class Stock
                 'guid'      => $productId,
                 'label'     => $name,
                 'val'       => $value,
-                'labelSlug' => StringsTools::t15n($name, '-', 199),
+                'labelSlug' => StringsTools::t15n($name, '-', self::LENGTH_SLUG),
                 'countAttr' => count($attributes),
-                'valSlug'   => StringsTools::t15n($value, '-', 199),
+                'valSlug'   => StringsTools::t15n($value, '-', self::LENGTH_SLUG),
                 '_visible'  => 0, //@todo Управление отображением атрибутов
             ]);
         }
@@ -290,10 +290,10 @@ class Stock
                 'type'       => 'prop',
                 'guid'       => $productId,
                 'label'      => $property->value(Description::ID, $property),
-                'val'        => StringsTools::cropText($propertyValue, 199),
+                'val'        => StringsTools::cropText($propertyValue, self::LENGTH_SLUG),
                 'labelSlug'  => '',
                 'countAttr'  => '',
-                'valSlug'    => StringsTools::t15n($propertyValue, '-', 199),
+                'valSlug'    => StringsTools::t15n($propertyValue, '-', self::LENGTH_SLUG),
                 '_visible'   => 0,
             ]);
         }
@@ -320,12 +320,12 @@ class Stock
                 'entityType'  => self::KEY_PROP,
                 'guid'        => $id,
                 'title'       => $name,
-                'slug'        => StringsTools::t15n($name, '-', 199),
+                'slug'        => StringsTools::t15n($name, '-', self::LENGTH_SLUG),
                 'val_type'    => $valueType,
                 'parent_guid' => '',
             ]);
 
-
+            $this->registerNamespace($property, 'ones');
             $variants = $property->elements(
                 Description::ATTRIBUTESVARIANTS,
                 Description::DIC
@@ -352,7 +352,7 @@ class Stock
                 'entityType'  => self::KEY_PROP,
                 'guid'        => $item->value(Description::VALUEID),
                 'title'       => $dictonaryValue,
-                'slug'        => StringsTools::t15n($dictonaryValue, '-', 199),
+                'slug'        => StringsTools::t15n($dictonaryValue, '-', self::LENGTH_SLUG),
                 'val_type'    => '',
                 'parent_guid' => $propertyId,
             ]);

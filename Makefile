@@ -23,7 +23,8 @@ help:
 		"\033[1mMYSQL_PORTS\033[0m\tSet port mapping for teleport_db.\n\t\texample: MYSQL_PORTS=\"-p 3307:3306\"\n\n" \
 		"EXAMPLES:\n\n" \
 		"make destroy build start BASEURL=10.0.3.39 PORT=\"-p 80:80\" MYSQL_PORTS=\"-p 3306:3306\"\n" \
-		"make destroy build start BASEURL=demo-teleport.imega.ru PORT=\"-p 8082:80\"\n\n"
+		"make destroy build start BASEURL=demo-teleport.imega.ru PORT=\"-p 8082:80\"\n" \
+		"make test BASEURL=10.0.3.39 DBHOST=10.0.3.39\n"
 
 quick: build test start
 
@@ -107,9 +108,9 @@ test:
 		-v $(CURDIR):/data \
 		--env="DB_HOST=$(DBHOST)" \
 		--env="BASE_URL=$(BASEURL)" \
-		imega/teleport-test vendor/bin/phpunit tests/iMega/Teleport/FunctionalTest207.php
+		imega/teleport-test vendor/bin/phpunit
 
 destroy: clean
 	-docker rmi -f $(IMAGES)
 
-.PHONY: build start test dep
+.PHONY: build

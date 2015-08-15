@@ -175,6 +175,7 @@ class Stock
             'img_prop'     => '',
         ]);
 
+        $this->registerNamespace($product, 'ones');
         $group = $product->elements(
             Description::GROUPS
         );

@@ -13,4 +13,5 @@ RUN apk add --update \
         php-pdo_mysql \
         php-pdo \
         php-curl && \
+    sed -i 's/memory_limit = .*/memory_limit = 512M/' /etc/php/php.ini && \
     rm -rf /var/cache/apk/*

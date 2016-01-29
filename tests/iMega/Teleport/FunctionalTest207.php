@@ -101,7 +101,7 @@ class FunctionalTest207 extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    /*public function testFileOffers()
+    public function testFileOffers()
     {
         $adapter = new Gaufrette\Adapter\Local(__DIR__.'/../../Fixtures/2.07');
         $fs = new Gaufrette\Filesystem($adapter);
@@ -113,7 +113,7 @@ class FunctionalTest207 extends \PHPUnit_Framework_TestCase
         $response = curl_exec($this->connector);
 
         $this->assertEquals("success\n", $response);
-    }*/
+    }
 
     /**
      * @test

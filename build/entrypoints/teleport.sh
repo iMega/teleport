@@ -3,8 +3,11 @@
 set -e
 
 ln -s /app /wordpress/wp-content/plugins/imega-teleport
+mkdir -p /wordpress/wp-content/uploads
+ln -s /storage /wordpress/wp-content/uploads/teleport
 cp /app/build/wordpress/wp-config.php /wordpress/wp-config.php
 ln -s /app/modules/xdebug.so /usr/lib/php/modules/xdebug.so
+sed -i 's/memory_limit = .*/memory_limit = 512M/' /etc/php/php.ini
 echo 'extension=xdebug.so' >> /etc/php/conf.d/xdebug.ini
 echo -e "[xdebug]\n
     xdebug.default_enable = On;\n

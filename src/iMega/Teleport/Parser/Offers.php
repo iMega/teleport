@@ -26,6 +26,7 @@ use iMega\Teleport\Events;
 class Offers
 {
     use Attribute;
+    use RegisterNamespaceXml;
 
     const KEY_SETS   = 40,
         KEY_OFFERS   = 50,
@@ -50,6 +51,11 @@ class Offers
     {
         $this->dispatcher = $dispatcher;
         $this->xml = new WalkerXML($data);
+        if (!empty($this->xml->getNamespaces())) {
+            $this->xml->registerXPathNamespace('ones', $this->xml->getNamespaces()['']);
+            $this->xml->namespace = 'ones';
+            $this->xml->root = true;
+        }
     }
 
     /**
@@ -78,16 +84,21 @@ class Offers
      */
     private function createOffers(array $offers)
     {
-
         foreach ($offers as $offer) {
+            $this->registerNamespace($offer, 'ones');
             /**
              * @var WalkerXML $offer
              */
             $id       = $offer->value(Description::ID);
             $baseUnit = $offer->value(Description::BASEUNIT);
+            $baseUnitRecount = $offer->elements(Description::BASEUNIT);
 
             if ($baseUnit) {
                 $units = $offer->elements(Description::BASEUNIT);
+            }
+
+            if (empty($baseUnit) && $baseUnitRecount) {
+                $units = $baseUnitRecount[0]->attribute();
             }
 
             $this->event([
@@ -96,7 +107,7 @@ class Offers
                 'prod_guid'       => substr($id, 0, 36),
                 'barcode'         => $offer->value(Description::BARCODE),
                 'title'           => $offer->value(Description::NAME),
-                'base_unit'       => $baseUnit,
+                'base_unit'       => empty($baseUnit) ? 'шт' : $baseUnit,
                 'base_unit_key'   => isset($units[Description::KEY]) ? $units[Description::KEY] : '',
                 'base_unit_title' => isset($units[Description::FULLNAME]) ? $units[Description::FULLNAME] : '',
                 'base_unit_int'   => isset($units[Description::INTERNATIONALABBREVIATION]) ? $units[Description::INTERNATIONALABBREVIATION] : '',

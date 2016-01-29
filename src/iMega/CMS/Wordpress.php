@@ -99,6 +99,19 @@ class Wordpress implements CmsInterface
     }
 
     /**
+     * Возвращает url до файлов товаров
+     *
+     * @return array
+     */
+    public function attaches()
+    {
+        $uploadDir = wp_upload_dir();
+        return [
+            'attaches.path' => $uploadDir['baseurl'] . '/teleport',
+        ];
+    }
+
+    /**
      * Возвращает путь для хранения файлов
      *
      * @return array
@@ -121,12 +134,21 @@ class Wordpress implements CmsInterface
     public function subscribers(Application $app)
     {
         return [
-            new WordpressSubscriber($app['mapper'], $app['resources'], $app['db.options']['prefix']),
+            new WordpressSubscriber($app['mapper'], $app['resources'], $this->getPatterns($app)),
         ];
     }
 
     protected function getMnemoConst($key)
     {
         return strtoupper($this->mnemo.'_'.$key);
+    }
+
+    protected function getPatterns(Application $app)
+    {
+        return [
+            '{$table_prefix}' => $app['db.options']['prefix'],
+            '{$baseurl}'      => $app['attaches.path'] . '/',
+            '{$imgpath}'      => '',
+        ];
     }
 }

@@ -35,6 +35,7 @@ build:
 
 start:
 	@mkdir -p $(CURDIR)/build/db
+	@mkdir -p $(CURDIR)/build/storage
 
 	@docker run -d \
 		--name "teleport_db" \
@@ -72,8 +73,10 @@ start:
 		--name "teleport" \
 		--link teleport_db:teleport_db \
 		--log-driver=syslog \
+		-v $(CURDIR)/build/storage:/storage \
 		-v $(CURDIR):/app \
 		-p 9001:9001 \
+		--memory="300M" \
 		imega/teleport \
 		php-fpm -F \
 			-d error_reporting=E_ALL \
@@ -86,6 +89,7 @@ start:
 		--name teleport_nginx \
 		--link teleport:service \
 		--log-driver=syslog \
+		-v $(CURDIR)/build/storage:/storage \
 		-v $(CURDIR)/build/sites-enabled:/etc/nginx/sites-enabled \
 		-v $(CURDIR)/build/conf.d:/etc/nginx/conf.d \
 		-v $(CURDIR)/build/entrypoints/teleport-nginx.sh:/teleport-nginx.sh \
@@ -101,6 +105,7 @@ dep:
 
 clean: stop
 	@rm -rf $(CURDIR)/build/db
+	@rm -rf $(CURDIR)/build/storage
 	-docker rm -fv $(CONTAINERS)
 
 test:
@@ -108,7 +113,8 @@ test:
 		-v $(CURDIR):/data \
 		--env="DB_HOST=$(DBHOST)" \
 		--env="BASE_URL=$(BASEURL)" \
-		imega/teleport-test vendor/bin/phpunit
+		--memory="300M" \
+		imega/teleport-test vendor/bin/phpunit tests/iMega/Teleport/Mapper/Mysqlnd205Test.php
 
 destroy: clean
 	-docker rmi -f $(IMAGES)

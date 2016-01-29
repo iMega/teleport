@@ -42,6 +42,11 @@ interface CmsInterface
     public function storage();
 
     /**
+     * @return array
+     */
+    public function attaches();
+
+    /**
      * @param Application $app Приложение.
      *
      * @return array

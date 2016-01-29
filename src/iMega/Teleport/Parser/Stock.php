@@ -163,8 +163,16 @@ class Stock
      */
     private function createProduct(WalkerXML $product, $catalogId)
     {
+        $this->registerNamespace($product, 'ones');
+
         $id   = $product->value(Description::ID);
         $name = $product->value(Description::NAME);
+
+        $image    = $product->value(Description::IMAGE);
+        $imageUrl = $image;
+        if (is_array($image)) {
+            $imageUrl = $image[0];
+        }
 
         $this->event([
             'entityType' => self::KEY_PROD,
@@ -174,7 +182,7 @@ class Stock
             'slug'         => StringsTools::t15n($name, '-', self::LENGTH_SLUG),
             'catalog_guid' => $catalogId,
             'article'      => $product->value(Description::ARTICLE),
-            'img'          => $product->value(Description::IMAGE),
+            'img'          => $imageUrl,
             'img_prop'     => '',
         ]);
 

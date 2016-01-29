@@ -34,9 +34,9 @@ class WordpressSubscriber implements EventSubscriberInterface
     protected $mapper;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $prefix;
+    protected $patterns;
 
     /**
      * @var StorageInterface
@@ -46,12 +46,12 @@ class WordpressSubscriber implements EventSubscriberInterface
     /**
      * @param MapperInterface  $mapper
      * @param StorageInterface $resources
-     * @param string           $prefix
+     * @param array            $replaces
      */
-    public function __construct(MapperInterface $mapper, $resources, $prefix)
+    public function __construct(MapperInterface $mapper, $resources, $patterns)
     {
         $this->mapper    = $mapper;
-        $this->prefix    = $prefix;
+        $this->patterns  = $patterns;
         $this->resources = $resources;
     }
 
@@ -73,8 +73,16 @@ class WordpressSubscriber implements EventSubscriberInterface
      */
     public function parseStart()
     {
-        $teleport = str_replace('{$table_prefix}', $this->prefix, $this->resources->read('teleport.sql'));
-        $queries  = str_replace('{$table_prefix}', $this->prefix, $this->resources->read('tabs.sql'));
+        $teleport = str_replace(
+            array_keys($this->patterns),
+            array_values($this->patterns),
+            $this->resources->read('teleport.sql')
+        );
+        $queries  = str_replace(
+            array_keys($this->patterns),
+            array_values($this->patterns),
+            $this->resources->read('tabs.sql')
+        );
         $this->mapper->preExecute($teleport . $queries);
     }
 
@@ -83,7 +91,11 @@ class WordpressSubscriber implements EventSubscriberInterface
      */
     public function parseEnd()
     {
-        $queries = str_replace('{$table_prefix}', $this->prefix, $this->resources->read('woocommerce.sql'));
+        $queries = str_replace(
+            array_keys($this->patterns),
+            array_values($this->patterns),
+            $this->resources->read('woocommerce.sql')
+        );
         $this->mapper->postExecute($queries);
     }
 }

@@ -37,7 +37,8 @@ class iMegaTeleport
         $options = array_merge_recursive(
             $cms->auth(),
             $cms->db(),
-            $cms->storage()
+            $cms->storage(),
+            $cms->attaches()
         );
         $appConfig = require_once __DIR__ . '/../../config/app.php';
         $app = new Application(array_merge_recursive($appConfig, $options));

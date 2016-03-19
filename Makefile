@@ -30,7 +30,7 @@ quick: build test start
 
 build:
 	@docker build -f "teleport-test.docker" -t imega/teleport-test .
-	@docker run --rm -v $(CURDIR):/data imega/composer:1.0.1 update
+	@docker run --rm -v $(CURDIR):/data imega/composer update
 	@docker build -f "teleport.docker" -t imega/teleport .
 
 start:
@@ -52,7 +52,6 @@ start:
 	@docker run --rm \
 		-v $(CURDIR)/build/sql:/sql \
 		--link teleport_db:teleport_db \
-		--log-driver=syslog \
 		imega/mysql-client:1.1.0 \
 		mysql --host=teleport_db -e "source /sql/teleport.sql"
 
@@ -65,14 +64,12 @@ start:
 	@docker run --rm \
 		-v $(CURDIR)/build/sql:/sql \
 		--link teleport_db:teleport_db \
-		--log-driver=syslog \
 		imega/mysql-client:1.1.0 \
 		mysql --host=teleport_db --database=teleport -e "source /sql/teleport_enable.sql"
 
 	@docker run -d \
 		--name "teleport" \
 		--link teleport_db:teleport_db \
-		--log-driver=syslog \
 		-v $(CURDIR)/build/storage:/storage \
 		-v $(CURDIR):/app \
 		-p 9001:9001 \
@@ -88,7 +85,6 @@ start:
 	@docker run -d \
 		--name teleport_nginx \
 		--link teleport:service \
-		--log-driver=syslog \
 		-v $(CURDIR)/build/storage:/storage \
 		-v $(CURDIR)/build/sites-enabled:/etc/nginx/sites-enabled \
 		-v $(CURDIR)/build/conf.d:/etc/nginx/conf.d \

@@ -30,6 +30,11 @@ use iMega\Teleport\Subscriber\RequestSubscriber;
 class iMegaTeleport
 {
     /**
+     * @var Application
+     */
+    protected $app;
+
+    /**
      * @param CmsInterface $cms Interface cms.
      */
     public function __construct(CmsInterface $cms)
@@ -65,13 +70,23 @@ class iMegaTeleport
             };
         });
 
+
+
         $app->register(new \Silex\Provider\ServiceControllerServiceProvider());
         foreach ($app['mount'] as $prefix => $controller) {
             $app->mount($prefix, $controller);
         }
         $request = Request::createFromGlobals();
-        if (0 === strpos($request->getBaseUrl(), '/1c_exchange.php')) {
+        if (0 === strpos($request->getPathInfo(), '/teleport')) {
             $app->run();
+        }
+    }
+
+    protected function registrationOnCloud(CmsInterface $cms)
+    {
+        if ($cms->isRegistered()) {
+            $response = $this->app['teleport.cloud']->registered($cms->getLogin());
+            $cms->setRegistered($response);
         }
     }
 }

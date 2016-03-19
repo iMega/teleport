@@ -26,13 +26,27 @@ use Silex\Application;
  */
 class Wordpress implements CmsInterface
 {
+    protected $pluginPath;
     protected $mnemo = 'IMEGATELEPORT';
+    protected $name  = 'iMega Teleport';
 
     /**
      * Construct. trailing slash.
      */
-    public function __construct()
+    public function __construct(array $options)
     {
+        $this->pluginPath = $options['pluginPath'];
+
+        if ($login = $this->getUser()) {
+            update_option('imegateleport-login', $login);
+        };
+
+        if ($this->getExpiredDate()) {
+
+            //update_option('imegateleport-expired', $expire);
+        }
+
+        $this->hooks();
         if (array_key_exists('DOCUMENT_URI', $_SERVER) &&
             !empty($_SERVER['DOCUMENT_URI']) &&
             $_SERVER['DOCUMENT_URI'] == '/1c_exchange.php'
@@ -150,5 +164,144 @@ class Wordpress implements CmsInterface
             '{$baseurl}'      => $app['attaches.path'] . '/',
             '{$imgpath}'      => '',
         ];
+    }
+
+    /**
+     * Action Hooks
+     */
+    function hooks()
+    {
+        add_action(
+            'admin_menu',
+            array(
+                $this,
+                'pluginMenuSettings'
+            )
+        );
+    }
+
+    /**
+     * Пунтк меню с настройками
+     */
+    function pluginMenuSettings()
+    {
+        add_options_page(
+            __('Settings') . ' ' . $this->name,
+            $this->name,
+            'manage_options',
+            $this->mnemo . '_settings',
+            array(
+                $this,
+                'pluginPageSettings'
+            )
+        );
+    }
+
+    /**
+     * Страница с настройками
+     */
+    function pluginPageSettings()
+    {
+        $text = $this->loadFile('resources/settings-form.htm');
+        $text = str_replace('{$title}', __('Settings') . ' ' . $this->name,
+            $text);
+        $text = str_replace('{$logo}',
+            plugins_url('/teleport.png', __FILE__), $text);
+        /*$text = str_replace('{$path}',
+            $this->path('basedir') . $this->path($this->mnemo), $text);*/
+        $text = str_replace('{$url}', get_site_url(), $text);
+        /*$text = str_replace('{$stat}', $this->stat(), $text);*/
+        $text = str_replace('{$feedback}', __('Feedback'), $text);
+
+        $checked = '';
+        $name = get_option('imegateleport-settings-fullname');
+        if ($name == 'true')
+            $checked = ' checked value=1';
+        $text = str_replace('{$checked_name}', $checked, $text);
+
+        $checked = '';
+        $name = get_option('imegateleport-settings-kod');
+        if ($name == 'true')
+            $checked = ' checked value=1';
+        $text = str_replace('{$checked_kod}', $checked, $text);
+
+        $checked = '';
+        $zip = get_option('imegateleport-settings-zip');
+        if ($zip == 'true')
+            $checked = ' checked value=1';
+        $text = str_replace('{$checked_zip}', $checked, $text);
+
+        $checked = '';
+        $article = get_option('imegateleport-settings-article');
+        if ($article == 'true')
+            $checked = ' checked value=1';
+        $text = str_replace('{$checked_article}', $checked, $text);
+
+        $checked = '';
+        $fulldesc = get_option('imegateleport-settings-fulldesc');
+        if ($fulldesc == 'true')
+            $checked = ' checked value=1';
+        $text = str_replace('{$checked_fulldesc}', $checked, $text);
+
+        $opt = get_option('imegateleport-settings-warehouse');
+        $displayWarehouses = 'none';
+        if (!empty($opt)) {
+            $displayWarehouses = 'block';
+            $warehousesActive = '';//$this->getWarehouseActive();
+            $warehouses = json_decode($opt);
+            $stockData = '';
+            $i = 0;
+            foreach ($warehouses as $key => $value) {
+                $stockData .= $this->getInputCheck($i, $value, array_key_exists($key, $warehousesActive));
+                $i++;
+            }
+            $text = str_replace('{$warehouses}', $stockData, $text);
+        }
+        $text = str_replace('{$display_warehouses}', $displayWarehouses, $text);
+
+        $login = get_option('imegateleport-login');
+        if (false === $login) {
+            $text = str_replace('{$login}', '<a href="/wp-admin/user-new.php">Создайте нового пользователя</a>', $text);
+        } else {
+            $text = str_replace('{$login}', $login, $text);
+        }
+
+
+        echo $text;
+    }
+
+    /**
+     * Загружает файл с текущей директори плагина
+     *
+     * @param string $filename
+     * @return string
+     */
+    function loadFile($filename, $force = false)
+    {
+        $dir = $this->pluginPath;
+        $text = file_get_contents("{$dir}/{$filename}");
+        //$text = str_replace('{$table_prefix}', $this->table_prefix, $text);
+        return $text;
+    }
+
+    protected function getUser()
+    {
+        if (false === $login = get_option('imegateleport-login')) {
+            $users = get_users('role=administrator&orderby=registered&order=desc');
+            foreach ($users as $user) {
+                $res = preg_match('/[a-fA-F0-9\-]{36}/', $user->user_login);
+                if (false !== $res && 1 == $res) {
+                    $login = $user->user_login;
+                    break;
+                }
+            }
+        }
+
+        return $login;
+    }
+
+    protected function getExpiredDate()
+    {
+        return get_option('imegateleport-expired');
     }
 }

@@ -16,7 +16,8 @@
     "php": ">=5.5.9",
     "silex/silex": "2.0.*@dev",
     "iMega/WalkerXML": "1.3.1",
-    "symfony/security": "v2.7.1"
+    "symfony/security": "v2.7.1",
+    "guzzlehttp/guzzle": ">=4.1.4 <7.0"
   },
   "require-dev": {
     "phpunit/phpunit": "4.7.5",

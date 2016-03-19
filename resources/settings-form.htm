@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="//teleport.imega.club/css/main.css">
+<div class=wrap>
+    <div style="float:left;width:90px;height:70px;background:url({$logo}) no-repeat center"></div>
+    <h1 style="line-height: 70px">{$title}</h1>
+    <div style="clear:both"></div>
+    <div style="clear:both; height:10px"></div>
+    <label class=imegasets for=fullname>
+        <input id=fullname name=fullname type=checkbox{$checked_name}>
+        В названии товара использовать полное наименование
+    </label>
+    <div style="clear:both; height:10px"></div>
+    <label class=imegasets for=fulldesc>
+        <input id=fulldesc name=fulldesc type=checkbox{$checked_fulldesc}>
+        Использовать файл описания товара
+    </label>
+    <div style="clear:both; height:15px"></div>
+    <label class=imegasets for=kod>
+        <input id=kod name=kod type=checkbox{$checked_kod}>
+        Отображать код товара
+    </label>
+    <div style="clear:both; height:15px"></div>
+    <label class=imegasets for=article>
+        <input id=article name=article type=checkbox{$checked_article}>
+        В поле SKU отображать Артикул (по умолчанию Штрихкод)
+    </label>
+    <div style="clear:both; height:15px"></div>
+    <div style="display: {$display_warehouses}">
+        <h2>Остатки товаров на складах</h2>
+        {$warehouses}
+    </div>
+    <div style="clear:both; height:20px"></div>
+    <h3>Статистика использования</h3>
+    <p>{$stat}</p>
+    <div style="clear:both; height:20px"></div>
+    <h3>Ваша учетная запись</h3>
+    <p>{$login}</p>
+    <p>Действует до: {$expire}</p>
+</div>

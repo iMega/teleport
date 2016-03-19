@@ -3,7 +3,7 @@
  * Plugin Name: iMega Teleport
  * Plugin URI: http://teleport.imega.ru
  * Description: EN:Import your products from your 1C to your new WooCommerce store. RU:Обеспечивает взаимосвязь интернет-магазина и 1С.
- * Version: 2.0.0
+ * Version: 2.1.0
  * Author: iMega ltd
  * Author URI: http://imega.ru
  * Requires at least: 3.5
@@ -26,20 +26,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if (! defined('ABSPATH'))
+if (!defined('ABSPATH')) {
     exit();
-
-if (! function_exists('wp_authenticate')) {
-    include (ABSPATH . 'wp-includes/pluggable.php');
 }
-if ( ! function_exists( 'get_plugins' ) ) {
+
+if (!function_exists('wp_authenticate')) {
+    include(ABSPATH . 'wp-includes/pluggable.php');
+}
+if (!function_exists('get_plugins')) {
     require_once ABSPATH . 'wp-admin/includes/plugin.php';
 }
 
-require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 $plugins = get_plugins();
 
 if (array_key_exists('imega-teleport/imega-teleport.php', $plugins)) {
-    $imegaTeleport = new \iMega\iMegaTeleport(new iMega\CMS\Wordpress());
+    $imegaTeleport = new \iMega\iMegaTeleport(new iMega\CMS\Wordpress(array('pluginPath' => __DIR__)));
 }

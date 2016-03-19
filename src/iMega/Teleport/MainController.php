@@ -39,12 +39,22 @@ class MainController implements ControllerProviderInterface
     public function connect(Application $app)
     {
         $c = $app['controllers_factory'];
+        $c->get("/", array($this, 'index'))->bind('index');
         $c->get("/checkauth", array($this, 'checkauth'))->bind('checkauth');
-        $c->get("/init", array($this, 'init'))->bind('init');
         $c->post("/file", array($this, 'acceptFile'))->bind('acceptFile');
         $c->get("/import", array($this, 'import'))->bind('import');
 
         return $c;
+    }
+
+    /**
+     * The cap of request on checkauth :)
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        return new Response("success\n", Response::HTTP_OK);
     }
 
     /**

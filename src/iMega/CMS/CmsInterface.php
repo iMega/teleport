@@ -52,4 +52,19 @@ interface CmsInterface
      * @return array
      */
     public function subscribers(Application $app);
+
+    /**
+     * @return string
+     */
+    public function getLogin();
+
+    /**
+     * @return bool
+     */
+    public function isRegistered();
+
+    /**
+     * @param mixed $response
+     */
+    public function setRegistered($response);
 }

@@ -152,6 +152,22 @@ class Wordpress implements CmsInterface
         ];
     }
 
+    public function getLogin()
+    {
+        
+        
+    }
+
+    public function isRegistered()
+    {
+        
+    }
+
+    public function setRegistered($response)
+    {
+
+    }
+    
     protected function getMnemoConst($key)
     {
         return strtoupper($this->mnemo.'_'.$key);

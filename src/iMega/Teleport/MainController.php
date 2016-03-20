@@ -38,6 +38,9 @@ class MainController implements ControllerProviderInterface
      */
     public function connect(Application $app)
     {
+        /**
+         * @var \Silex\ControllerCollection $c
+         */
         $c = $app['controllers_factory'];
         $c->get("/", array($this, 'index'))->bind('index');
         $c->get("/checkauth", array($this, 'checkauth'))->bind('checkauth');

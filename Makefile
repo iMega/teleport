@@ -30,7 +30,7 @@ quick: build test start
 
 build:
 	@docker build -f "teleport-test.docker" -t imega/teleport-test .
-	@docker run --rm -v $(CURDIR):/data imega/composer update
+	@docker run --rm -v $(CURDIR):/data imega/composer update --ignore-platform-reqs --no-interaction
 	@docker build -f "teleport.docker" -t imega/teleport .
 
 start:
@@ -57,7 +57,6 @@ start:
 
 	@docker run --rm \
 		--link teleport_db:teleport_db \
-		--log-driver=syslog \
 		imega/mysql-client:1.1.0 \
 		mysql --host=teleport_db --database=teleport -e "update wp_options set option_value='http://$(BASEURL)' where option_id in (1,2);"
 

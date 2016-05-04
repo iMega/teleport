@@ -18,11 +18,12 @@
 
 namespace iMega\Teleport\Provider;
 
+use iMega\Teleport\Cloud\ApiCloud;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
 /**
- * Class AMQPServiceProvider
+ * Class TeleportCloudServiceProvider
  */
 class TeleportCloudServiceProvider implements ServiceProviderInterface
 {
@@ -33,8 +34,8 @@ class TeleportCloudServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $app)
     {
-        $application['teleport.cloud'] = function () {
-            return new ApiCloud();
+        $app['teleport.cloud'] = function ($app) {
+            return new ApiCloud($app['teleport.cloud.options']);
         };
     }
 }

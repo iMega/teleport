@@ -29,5 +29,8 @@ return [
     },
     'mapper' => function (Application $app) {
         return new iMega\Teleport\Mapper\Mysqlnd($app['db.options']);
-    }
+    },
+    'teleport.cloud.options' => [
+        'base_uri' => 'http://a.imega.club',
+    ],
 ];

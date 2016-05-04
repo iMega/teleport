@@ -28,10 +28,12 @@ help:
 
 quick: build test start
 
-build:
+build: composer
 	@docker build -f "teleport-test.docker" -t imega/teleport-test .
-	@docker run --rm -v $(CURDIR):/data imega/composer update --ignore-platform-reqs --no-interaction
 	@docker build -f "teleport.docker" -t imega/teleport .
+
+composer:
+	@docker run --rm -v $(CURDIR):/data imega/composer update --ignore-platform-reqs --no-interaction
 
 start:
 	@mkdir -p $(CURDIR)/build/db
@@ -39,9 +41,8 @@ start:
 
 	@docker run -d \
 		--name "teleport_db" \
-		-v $(CURDIR)/build/db:/var/lib/mysql \
 		$(MYSQL_PORTS) \
-		imega/mysql
+		imega/mysql:1.0.0
 
 	@docker run --rm \
 		-v $(CURDIR)/build/sql:/sql \
@@ -49,11 +50,11 @@ start:
 		imega/mysql-client:1.1.0 \
 		mysqladmin --silent --host=teleport_db --wait=5 ping
 
-	@docker run --rm \
-		-v $(CURDIR)/build/sql:/sql \
-		--link teleport_db:teleport_db \
-		imega/mysql-client:1.1.0 \
-		mysql --host=teleport_db -e "source /sql/teleport.sql"
+#	@docker run --rm \
+#		-v $(CURDIR)/build/sql:/sql \
+#		--link teleport_db:teleport_db \
+#		imega/mysql-client:1.1.0 \
+#		mysql --host=teleport_db -e "source /sql/teleport.sql"
 
 	@docker run --rm \
 		--link teleport_db:teleport_db \
@@ -71,7 +72,7 @@ start:
 		--link teleport_db:teleport_db \
 		-v $(CURDIR)/build/storage:/storage \
 		-v $(CURDIR):/app \
-		-p 9001:9001 \
+		-p 9005:9005 \
 		--memory="300M" \
 		imega/teleport \
 		php-fpm -F \

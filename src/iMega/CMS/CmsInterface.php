@@ -59,6 +59,11 @@ interface CmsInterface
     public function getLogin();
 
     /**
+     * @return string
+     */
+    public function getUrl();
+
+    /**
      * @return bool
      */
     public function isRegistered();

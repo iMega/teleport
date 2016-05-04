@@ -67,7 +67,7 @@ class MainController implements ControllerProviderInterface
      */
     public function checkauth()
     {
-        return new Response("success\n", Response::HTTP_OK);
+        return new Response("success-checkauth\n", Response::HTTP_OK);
     }
 
     /**

@@ -18,6 +18,7 @@
 namespace iMega;
 
 use iMega\CMS\CmsInterface;
+use iMega\Teleport\Provider\TeleportCloudServiceProvider;
 use iMega\Teleport\Subscriber\BufferSubscriber;
 use iMega\Teleport\Subscriber\PackerSubscriber;
 use Silex\Application;
@@ -47,6 +48,7 @@ class iMegaTeleport
         );
         $appConfig = require_once __DIR__ . '/../../config/app.php';
         $app = new Application(array_merge_recursive($appConfig, $options));
+        $this->app = $app;
 
         $app['debug'] = true;
         $app['dispatcher']->addSubscriber(new RequestSubscriber($app));
@@ -55,7 +57,7 @@ class iMegaTeleport
         foreach ($cms->subscribers($app) as $subscriber) {
             $app['dispatcher']->addSubscriber($subscriber);
         }
-
+        $app->register(new TeleportCloudServiceProvider());
         $app->register(new \Silex\Provider\SecurityServiceProvider());
         $app['security.authentication_provider.dao._proto'] = $app->protect(function ($name) use ($app, $cms) {
             return function () use ($app, $name, $cms) {
@@ -70,12 +72,13 @@ class iMegaTeleport
             };
         });
 
-
-
         $app->register(new \Silex\Provider\ServiceControllerServiceProvider());
         foreach ($app['mount'] as $prefix => $controller) {
             $app->mount($prefix, $controller);
         }
+
+        $this->registrationOnCloud($cms);
+
         $request = Request::createFromGlobals();
         if (0 === strpos($request->getPathInfo(), '/teleport')) {
             $app->run();
@@ -84,8 +87,8 @@ class iMegaTeleport
 
     protected function registrationOnCloud(CmsInterface $cms)
     {
-        if ($cms->isRegistered()) {
-            $response = $this->app['teleport.cloud']->registered($cms->getLogin());
+        if (!$cms->isRegistered()) {
+            $response = $this->app->offsetGet('teleport.cloud')->registered($cms->getLogin(), $cms->getUrl());
             $cms->setRegistered($response);
         }
     }

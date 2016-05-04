@@ -17,6 +17,9 @@ define('NONCE_SALT',       'put your unique phrase here');
 $table_prefix  = 'wp_';
 define('WP_DEBUG', true);
 define('IMEGATELEPORT_LOG', true);
+
+define('WP_ALLOW_REPAIR', true);
+
 if ( !defined('ABSPATH') )
     define('ABSPATH', dirname(__FILE__) . '/');
 require_once(ABSPATH . 'wp-settings.php');

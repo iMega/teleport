@@ -29,6 +29,7 @@ class Wordpress implements CmsInterface
     protected $pluginPath;
     protected $mnemo = 'IMEGATELEPORT';
     protected $name  = 'iMega Teleport';
+    protected $login = null;
 
     /**
      * Construct. trailing slash.
@@ -37,8 +38,8 @@ class Wordpress implements CmsInterface
     {
         $this->pluginPath = $options['pluginPath'];
 
-        if ($login = $this->getUser()) {
-            update_option('imegateleport-login', $login);
+        if ($this->login = $this->getUser()) {
+            update_option('imegateleport-login', $this->login);
         };
 
         if ($this->getExpiredDate()) {
@@ -152,22 +153,32 @@ class Wordpress implements CmsInterface
         ];
     }
 
+    /**
+     * @return string
+     */
     public function getLogin()
     {
-        
-        
+        return $this->getUser();
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return get_option('siteurl');
     }
 
     public function isRegistered()
     {
-        
+        return false;
     }
 
     public function setRegistered($response)
     {
 
     }
-    
+
     protected function getMnemoConst($key)
     {
         return strtoupper($this->mnemo.'_'.$key);
@@ -300,8 +311,16 @@ class Wordpress implements CmsInterface
         return $text;
     }
 
+    /**
+     * Возвращает логин пользователя для телепорта
+     *
+     * @return string
+     */
     protected function getUser()
     {
+        if (null !== $this->login) {
+            return $this->login;
+        }
         if (false === $login = get_option('imegateleport-login')) {
             $users = get_users('role=administrator&orderby=registered&order=desc');
             foreach ($users as $user) {

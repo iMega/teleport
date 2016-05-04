@@ -17,7 +17,29 @@
  */
 namespace iMega\Teleport\Cloud;
 
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Client as GuzzleClient;
+
 class ApiCloud
 {
+    protected $client;
 
+    public function __construct(array $options = [], ClientInterface $client = null)
+    {
+        $options = array_replace(array(
+            'base_uri' => 'http://localhost',
+            'debug' => false,
+        ), $options);
+
+        $this->client = $client ?: new GuzzleClient($options);
+    }
+
+    public function registered($login, $url)
+    {
+        $data = [
+            'url' => $url,
+        ];
+        //$response = $this->client->post('/activate/register-plugin/' . $login, ['json' => $data]);
+        //var_dump($response->getBody()->__toString());
+    }
 }

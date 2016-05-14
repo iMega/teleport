@@ -4,6 +4,7 @@ DBHOST = localhost
 PORT = -p 127.0.0.1:80:80
 BASEURL = localhost
 MYSQL_PORTS =
+BUILD = $(CURDIR)/build
 
 help:
 	@echo "USAGE: make COMMAND [OPTIONS]\n\n" \
@@ -28,12 +29,27 @@ help:
 
 quick: build test start
 
-build: composer
-	@docker build -f "teleport-test.docker" -t imega/teleport-test .
-	@docker build -f "teleport.docker" -t imega/teleport .
+build: build/packages build/composer
+#	@docker build -f "teleport-test.docker" -t imega/teleport-test .
+	@docker build -t imega/teleport .
 
-composer:
+build/packages:
+	@mkdir -p $(CURDIR)/build
+	@curl -L0sS http://wordpress.org/wordpress-4.2.2.zip -o $(BUILD)/wordpress.zip
+	@curl -L0sS http://downloads.wordpress.org/plugin/woocommerce.2.5.5.zip -o $(BUILD)/woocommerce.zip
+	@curl -L0sS https://downloads.wordpress.org/theme/omega.1.2.3.zip -o $(BUILD)/omega.zip
+	@curl -L0sS https://downloads.wordpress.org/theme/shopping.0.4.0.zip -o $(BUILD)/shopping.zip
+	@docker run --rm -v $(BUILD):/data imega/unzip
+	@mv $(BUILD)/wordpress/wordpress/* $(BUILD)/wordpress/
+	@mv $(BUILD)/woocommerce $(BUILD)/wordpress/wp-content/plugins/
+	@mv $(BUILD)/omega $(BUILD)/wordpress/wp-content/themes/
+	@mv $(BUILD)/shopping $(BUILD)/wordpress/wp-content/themes/
+	@touch $(CURDIR)/build/packages
+
+
+build/composer:
 	@docker run --rm -v $(CURDIR):/data imega/composer update --ignore-platform-reqs --no-interaction
+	@touch $(CURDIR)/build/composer
 
 start:
 	@mkdir -p $(CURDIR)/build/db
@@ -45,16 +61,15 @@ start:
 		imega/mysql:1.0.0
 
 	@docker run --rm \
-		-v $(CURDIR)/build/sql:/sql \
 		--link teleport_db:teleport_db \
 		imega/mysql-client:1.1.0 \
 		mysqladmin --silent --host=teleport_db --wait=5 ping
 
-#	@docker run --rm \
-#		-v $(CURDIR)/build/sql:/sql \
-#		--link teleport_db:teleport_db \
-#		imega/mysql-client:1.1.0 \
-#		mysql --host=teleport_db -e "source /sql/teleport.sql"
+	@docker run --rm \
+		-v $(CURDIR)/images/teleport_db/sql:/sql \
+		--link teleport_db:teleport_db \
+		imega/mysql-client:1.1.0 \
+		mysql --host=teleport_db -e "source /sql/teleport.sql"
 
 	@docker run --rm \
 		--link teleport_db:teleport_db \
@@ -62,7 +77,7 @@ start:
 		mysql --host=teleport_db --database=teleport -e "update wp_options set option_value='http://$(BASEURL)' where option_id in (1,2);"
 
 	@docker run --rm \
-		-v $(CURDIR)/build/sql:/sql \
+		-v $(CURDIR)/images/teleport_db/sql:/sql \
 		--link teleport_db:teleport_db \
 		imega/mysql-client:1.1.0 \
 		mysql --host=teleport_db --database=teleport -e "source /sql/teleport_enable.sql"
@@ -70,6 +85,7 @@ start:
 	@docker run -d \
 		--name "teleport" \
 		--link teleport_db:teleport_db \
+		-v $(CURDIR)/build/wordpress:/wordpress \
 		-v $(CURDIR)/build/storage:/storage \
 		-v $(CURDIR):/app \
 		-p 9005:9005 \
@@ -85,10 +101,11 @@ start:
 	@docker run -d \
 		--name teleport_nginx \
 		--link teleport:service \
+		-v $(CURDIR)/build/wordpress:/wordpress \
 		-v $(CURDIR)/build/storage:/storage \
-		-v $(CURDIR)/build/sites-enabled:/etc/nginx/sites-enabled \
-		-v $(CURDIR)/build/conf.d:/etc/nginx/conf.d \
-		-v $(CURDIR)/build/entrypoints/teleport-nginx.sh:/teleport-nginx.sh \
+		-v $(CURDIR)/images/teleport_nginx/sites-enabled:/etc/nginx/sites-enabled \
+		-v $(CURDIR)/images/teleport_nginx/conf.d:/etc/nginx/conf.d \
+		-v $(CURDIR)/images/teleport_nginx/entrypoints/teleport-nginx.sh:/teleport-nginx.sh \
 		$(PORT) \
 		--entrypoint=/teleport-nginx.sh \
 		leanlabs/nginx

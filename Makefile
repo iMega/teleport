@@ -41,14 +41,14 @@ build/packages:
 	@curl -L0sS https://downloads.wordpress.org/theme/shopping.0.4.0.zip -o $(BUILD)/shopping.zip
 	@docker run --rm -v $(BUILD):/data imega/unzip
 	@mv $(BUILD)/wordpress/wordpress/* $(BUILD)/wordpress/
-	@mv $(BUILD)/woocommerce $(BUILD)/wordpress/wp-content/plugins/
-	@mv $(BUILD)/omega $(BUILD)/wordpress/wp-content/themes/
-	@mv $(BUILD)/shopping $(BUILD)/wordpress/wp-content/themes/
+	@mv $(BUILD)/woocommerce/woocommerce $(BUILD)/wordpress/wp-content/plugins/
+	@mv $(BUILD)/omega/omega $(BUILD)/wordpress/wp-content/themes/
+	@mv $(BUILD)/shopping/shopping $(BUILD)/wordpress/wp-content/themes/
 	@touch $(CURDIR)/build/packages
 
 
 build/composer:
-	@docker run --rm -v $(CURDIR):/data imega/composer update --ignore-platform-reqs --no-interaction
+	@docker run --rm -v $(CURDIR):/data imega/composer:2.3.1 update --ignore-platform-reqs --no-interaction
 	@touch $(CURDIR)/build/composer
 
 start:
@@ -62,24 +62,24 @@ start:
 
 	@docker run --rm \
 		--link teleport_db:teleport_db \
-		imega/mysql-client:1.1.0 \
+		imega/mysql-client:1.3.0 \
 		mysqladmin --silent --host=teleport_db --wait=5 ping
 
 	@docker run --rm \
 		-v $(CURDIR)/images/teleport_db/sql:/sql \
 		--link teleport_db:teleport_db \
-		imega/mysql-client:1.1.0 \
+		imega/mysql-client:1.3.0 \
 		mysql --host=teleport_db -e "source /sql/teleport.sql"
 
 	@docker run --rm \
 		--link teleport_db:teleport_db \
-		imega/mysql-client:1.1.0 \
+		imega/mysql-client:1.3.0 \
 		mysql --host=teleport_db --database=teleport -e "update wp_options set option_value='http://$(BASEURL)' where option_id in (1,2);"
 
 	@docker run --rm \
 		-v $(CURDIR)/images/teleport_db/sql:/sql \
 		--link teleport_db:teleport_db \
-		imega/mysql-client:1.1.0 \
+		imega/mysql-client:1.3.0 \
 		mysql --host=teleport_db --database=teleport -e "source /sql/teleport_enable.sql"
 
 	@docker run -d \

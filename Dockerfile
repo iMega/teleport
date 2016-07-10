@@ -5,8 +5,7 @@ VOLUME ["/app", "/wordpress"]
 RUN echo "@stale http://dl-4.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
     apk add --update \
         php-zlib \
-        php-mysqli \
-        php-xdebug@stale && \
+        php-mysqli && \
     rm -rf /var/cache/apk/*
 
 ENTRYPOINT ["/bin/sh", "/app/images/teleport/entrypoints/teleport.sh"]

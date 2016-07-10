@@ -22,7 +22,6 @@ use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpCache\Store;
 
 /**
  * Class Controller
@@ -42,42 +41,11 @@ class MainController implements ControllerProviderInterface
          * @var \Silex\ControllerCollection $c
          */
         $c = $app['controllers_factory'];
-        $c->get("/", array($this, 'index'))->bind('index');
-        $c->get("/checkauth", array($this, 'checkauth'))->bind('checkauth');
-        $c->post("/file", array($this, 'acceptFile'))->bind('acceptFile');
-        $c->get("/import", array($this, 'import'))->bind('import');
+        $c->post("/accept-file", array($this, 'acceptFile'))->bind('acceptFile');
+        $c->post("/progress", array($this, 'progress'))->bind('progress');
+        $c->post("/import", array($this, 'import'))->bind('import');
 
         return $c;
-    }
-
-    /**
-     * The cap of request on checkauth :)
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        return new Response("success\n", Response::HTTP_OK);
-    }
-
-    /**
-     * The cap of request on checkauth :)
-     *
-     * @return Response
-     */
-    public function checkauth()
-    {
-        return new Response("success-checkauth\n", Response::HTTP_OK);
-    }
-
-    /**
-     * Send params for session
-     *
-     * @return Response
-     */
-    public function init()
-    {
-        return new Response("zip=no\nfile_limit=2000000\n", Response::HTTP_OK);
     }
 
     /**
@@ -89,23 +57,30 @@ class MainController implements ControllerProviderInterface
      */
     public function acceptFile(Application $app, Request $request)
     {
-        $filename = $request->get('filename');
-        $data = $request->getContent();
-        /**
-         * @var \iMega\Teleport\StorageInterface $storage
-         */
-        $storage = $app['storage'];
-        $result = file_put_contents('gaufrette://teleport/'.$filename, $data, FILE_APPEND);
+        $data = json_decode($request->getContent(), true);
+        $path = sprintf('%s/%s/%s', $data['url'], $data['uripath'], $data['uuid']);
+        $app['service.acceptfile']->downloads($path, $data['files']);
 
-        if (false === $result) {
-            return new Response("failure\n", Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return new Response('', Response::HTTP_OK);
+    }
 
-        return new Response("success\n", Response::HTTP_OK);
+
+    /**
+     * Write progress
+     *
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public function progress(Application $app, Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        return new Response('', Response::HTTP_OK);
     }
 
     /**
-     * Kick me!
+     * Import data
      *
      * @param Request $request
      *
@@ -113,46 +88,8 @@ class MainController implements ControllerProviderInterface
      */
     public function import(Application $app, Request $request)
     {
-        $filename = $request->get('filename');
-        /**
-         * @var \iMega\Teleport\StorageInterface $storage
-         */
-        $storage = $app['storage'];
+        $data = json_decode($request->getContent(), true);
 
-        $app['dispatcher']->dispatch(Events::BUFFER_PARSE_START, null);
-
-        $keyStock = $this->getFileNameSource($storage, Parser\Description::CLASSI);
-        if (!empty($keyStock)) {
-            $stock = new Parser\Stock($storage->read($keyStock), $app['dispatcher']);
-            $stock->parse();
-            $storage->delete($keyStock);
-        }
-
-        $keyOffer = $this->getFileNameSource($storage, Parser\Description::PACKAGEOFFERS);
-        if (!empty($keyOffer)) {
-            $offers = new Parser\Offers($storage->read($keyOffer), $app['dispatcher']);
-            $offers->parse();
-            $storage->delete($keyOffer);
-        }
-
-
-        $app['dispatcher']->dispatch(Events::BUFFER_PARSE_END, null);
-
-        return new Response("success\n", Response::HTTP_OK);
-    }
-
-    private function getFileNameSource($storage, $type)
-    {
-        /**
-         * @var \Gaufrette\Filesystem $storage
-         */
-        foreach ($storage->keys() as $file) {
-            if (strpos($file, '.xml') >= 1) {
-                $res = $storage->read($file);
-                if (mb_strpos($res, $type) > 0) {
-                    return $file;
-                }
-            }
-        }
+        return new Response('', Response::HTTP_OK);
     }
 }

@@ -1,24 +1,8 @@
 <?php
-/**
- * Copyright (C) 2014 iMega ltd Dmitry Gavriloff (email: info@imega.ru),
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-namespace iMega\Teleport\Cloud;
+
+namespace iMega\Teleport\Service;
 
 use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use iMega\Teleport\Service\Exception;
@@ -27,48 +11,39 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class ApiCloud
+class CurlService
 {
     protected $client;
+    protected $logger;
 
-    public function __construct(array $options = [], LoggerInterface $logger = null, ClientInterface $client = null)
+    public function __construct($options = [], LoggerInterface $logger = null, GuzzleClient $client = null)
     {
         $options = array_replace(array(
             'base_uri' => 'http://127.0.0.1:80',
             'http_errors' => false
         ), $options);
-var_dump($options);
+
         $this->client = $client ?: new GuzzleClient($options);
         $this->logger = $logger ?: new NullLogger();
     }
 
-    public function registered($login, $url)
-    {
-        $data = [
-            'url' => $url,
-        ];
-        //$response = $this->send($this->buildRequest('POST', '/activate/register-plugin' . $login), ['json' => $data]);
-        //$response = $this->client->post('/activate/register-plugin/' . $login, ['json' => $data]);
-        //var_dump($response->getBody()->__toString());
-    }
-
     public function download($url = null, array $options = [])
     {
-        return $this->send($this->buildRequest('GET', $url, $options), $options);
+        return $this->send($this->buildRequest('GET', $url, $options));
     }
 
-    private function send(RequestInterface $request, array $options = [])
+    private function send(RequestInterface $request)
     {
         $this->logger->info(sprintf('%s "%s"', $request->getMethod(), $request->getUri()));
         $this->logger->debug(sprintf(
-                "Request:\n%s\n%s\n%s",
-                $request->getUri(),
-                $request->getMethod(),
-                json_encode($request->getHeaders()))
+            "Request:\n%s\n%s\n%s",
+            $request->getUri(),
+            $request->getMethod(),
+            json_encode($request->getHeaders()))
         );
 
         try {
-            $response = $this->client->send($request, $options);
+            $response = $this->client->send($request);
         } catch (TransferException $e) {
             $message = sprintf('Something went wrong when calling storage (%s).', $e->getMessage());
             $this->logger->error($message);
@@ -77,10 +52,10 @@ var_dump($options);
         }
 
         $this->logger->debug(sprintf(
-                "Response:\n%s\n%s\n%s",
-                $response->getStatusCode(),
-                json_encode($response->getHeaders()),
-                $response->getBody()->getContents())
+            "Response:\n%s\n%s\n%s",
+            $response->getStatusCode(),
+            json_encode($response->getHeaders()),
+            $response->getBody()->getContents())
         );
 
         if (400 <= $response->getStatusCode()) {

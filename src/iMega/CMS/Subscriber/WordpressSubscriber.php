@@ -64,6 +64,7 @@ class WordpressSubscriber implements EventSubscriberInterface
     {
         return array(
             Events::BUFFER_PARSE_START => ['parseStart', 200],
+            Events::BUFFER_PARSE_DUMP  => ['parseDump', 200],
             Events::BUFFER_PARSE_END   => ['parseEnd', 200],
         );
     }
@@ -84,6 +85,19 @@ class WordpressSubscriber implements EventSubscriberInterface
             $this->resources->read('tabs.sql')
         );
         $this->mapper->preExecute($teleport . $queries);
+    }
+
+    /**
+     * Event
+     */
+    public function parseDump()
+    {
+        $queries = str_replace(
+            array_keys($this->patterns),
+            array_values($this->patterns),
+            $this->resources->read('dump.sql')
+        );
+        $this->mapper->preExecute($queries);
     }
 
     /**

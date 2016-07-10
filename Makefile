@@ -52,7 +52,6 @@ build/composer:
 	@touch $(CURDIR)/build/composer
 
 start:
-	@mkdir -p $(CURDIR)/build/db
 	@mkdir -p $(CURDIR)/build/storage
 
 	@docker run -d \
@@ -117,7 +116,6 @@ dep:
 	@docker run --rm -v $(CURDIR):/data imega/composer:1.0.1 update
 
 clean: stop
-	@rm -rf $(CURDIR)/build/db
 	@rm -rf $(CURDIR)/build/storage
 	-docker rm -fv $(CONTAINERS)
 

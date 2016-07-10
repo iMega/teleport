@@ -43,18 +43,10 @@ class Wordpress implements CmsInterface
         };
 
         if ($this->getExpiredDate()) {
-
             //update_option('imegateleport-expired', $expire);
         }
 
         $this->hooks();
-        if (array_key_exists('DOCUMENT_URI', $_SERVER) &&
-            !empty($_SERVER['DOCUMENT_URI']) &&
-            $_SERVER['DOCUMENT_URI'] == '/1c_exchange.php'
-        ) {
-            $_SERVER['REQUEST_URI'] = $_SERVER['DOCUMENT_URI'] . '/?' . $_SERVER['QUERY_STRING'];
-            $_SERVER['SCRIPT_NAME'] = '/1c_exchange.php/index.php';
-        }
     }
 
     /**
@@ -149,7 +141,7 @@ class Wordpress implements CmsInterface
     public function subscribers(Application $app)
     {
         return [
-            new WordpressSubscriber($app['mapper'], $app['resources'], $this->getPatterns($app)),
+            new WordpressSubscriber($app['mapper'], $app['storage'], $this->getPatterns($app)),
         ];
     }
 
@@ -176,7 +168,7 @@ class Wordpress implements CmsInterface
 
     public function setRegistered($response)
     {
-
+        //update_option('imegateleport-registered', $);
     }
 
     protected function getMnemoConst($key)

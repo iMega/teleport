@@ -24,6 +24,7 @@ final class Events
 {
     const BUFFER_PARSE_END        = 'buffer.parse.end',
           BUFFER_PARSE_START      = 'buffer.parse.start',
+          BUFFER_PARSE_DUMP       = 'buffer.parse.dump',
           BUFFER_PARSE_STOCK_PRE  = 'buffer.parse.stock.pre',
           BUFFER_PARSE_STOCK      = 'buffer.parse.stock',
           BUFFER_PARSE_STOCK_END  = 'buffer.parse.stock.end',

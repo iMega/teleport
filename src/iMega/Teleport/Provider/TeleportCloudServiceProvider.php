@@ -35,7 +35,15 @@ class TeleportCloudServiceProvider implements ServiceProviderInterface
     public function register(Container $app)
     {
         $app['teleport.cloud'] = function ($app) {
-            return new ApiCloud($app['teleport.cloud.options']);
+            $guzzleClient = null;
+            $logger = null;
+            if ($app->offsetExists('guzzle.client')) {
+                $guzzleClient = $app['guzzle.client'];
+            }
+            if ($app->offsetExists('logger')) {
+                $logger = $app['logger'];
+            }
+            return new ApiCloud($app['teleport.cloud.options'], $logger, $guzzleClient);
         };
     }
 }

@@ -20,10 +20,6 @@ return [
         Gaufrette\StreamWrapper::register();
         return $fs;
     },
-    'resources' => function () {
-        $adapter = new Gaufrette\Adapter\Local(__DIR__ . '/../resources');
-        return new Gaufrette\Filesystem($adapter);
-    },
     'buffer' => function () {
         return new \iMega\Teleport\Buffers\Memory();
     },
@@ -31,6 +27,9 @@ return [
         return new iMega\Teleport\Mapper\Mysqlnd($app['db.options']);
     },
     'teleport.cloud.options' => [
-        'base_uri' => 'http://a.imega.club',
+        'base_uri' => 'http://teleport.imega.club',
     ],
+    'service.acceptfile' => function (Application $app) {
+        return new \iMega\Teleport\Service\AcceptFileService($app['teleport.cloud'], $app['storage']);
+    },
 ];

@@ -18,6 +18,7 @@
 namespace iMega\CMS;
 
 use Silex\Application;
+use iMega\Teleport\MapperInterface;
 
 interface CmsInterface
 {
@@ -72,4 +73,23 @@ interface CmsInterface
      * @param mixed $response
      */
     public function setRegistered($response);
+
+    /**
+     * Чтение/Запись значения прогресса выполнения задачи
+     *
+     * @param null|int $value
+     *
+     * @return int
+     */
+    public function progress($value = null);
+
+    /**
+     * Импорт дампа
+     *
+     * @param MapperInterface $mapper
+     * @param string          $file
+     *
+     * @return bool
+     */
+    public function import($mapper, $file);
 }

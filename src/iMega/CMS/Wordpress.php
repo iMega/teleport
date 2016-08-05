@@ -20,6 +20,7 @@ namespace iMega\CMS;
 use iMega\CMS\Security\User\Provider\WordpressUserProvider;
 use iMega\CMS\Subscriber\WordpressSubscriber;
 use Silex\Application;
+use iMega\Teleport\MapperInterface;
 
 /**
  * Class Wordpress
@@ -169,6 +170,35 @@ class Wordpress implements CmsInterface
     public function setRegistered($response)
     {
         //update_option('imegateleport-registered', $);
+    }
+
+    /**
+     * Чтение/Запись значения прогресса выполнения задачи
+     *
+     * @param null|int $value
+     *
+     * @return int
+     */
+    public function progress($value = null)
+    {
+        if (null !== $value) {
+            update_option('imegateleport-progress', (int) $value);
+        }
+
+        return get_option('imegateleport-progress');
+    }
+
+    /**
+     * Импорт дампа
+     *
+     * @param MapperInterface $mapper
+     * @param string          $dump
+     *
+     * @return bool
+     */
+    public function import($mapper, $dump)
+    {
+        $mapper->postExecute($dump);
     }
 
     protected function getMnemoConst($key)

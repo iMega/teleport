@@ -66,6 +66,7 @@ class WordpressSubscriber implements EventSubscriberInterface
             Events::BUFFER_PARSE_START => ['parseStart', 200],
             Events::BUFFER_PARSE_DUMP  => ['parseDump', 200],
             Events::BUFFER_PARSE_END   => ['parseEnd', 200],
+            Events::EXECUTE_DUMP       => ['executeDump', 200],
         );
     }
 
@@ -109,6 +110,20 @@ class WordpressSubscriber implements EventSubscriberInterface
             array_keys($this->patterns),
             array_values($this->patterns),
             $this->resources->read('woocommerce.sql')
+        );
+        $this->mapper->postExecute($queries);
+    }
+
+    /**
+     * @param Events\DumpEvent $dumpEvent
+     */
+    public function executeDump(Events\DumpEvent $dumpEvent)
+    {
+        $filename = $dumpEvent->getData();
+        $queries = str_replace(
+            array_keys($this->patterns),
+            array_values($this->patterns),
+            $this->resources->read($filename)
         );
         $this->mapper->postExecute($queries);
     }

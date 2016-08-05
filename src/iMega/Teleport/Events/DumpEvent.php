@@ -15,22 +15,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace iMega\Teleport;
+namespace iMega\Teleport\Events;
+
+use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class Events
+ * Class DumpEvent
  */
-final class Events
+class DumpEvent extends Event
 {
-    const BUFFER_PARSE_END        = 'buffer.parse.end';
-    const BUFFER_PARSE_START      = 'buffer.parse.start';
-    const BUFFER_PARSE_DUMP       = 'buffer.parse.dump';
-    const BUFFER_PARSE_STOCK_PRE  = 'buffer.parse.stock.pre';
-    const BUFFER_PARSE_STOCK      = 'buffer.parse.stock';
-    const BUFFER_PARSE_STOCK_END  = 'buffer.parse.stock.end';
-    const BUFFER_PARSE_OFFERS_PRE = 'buffer.parse.offers.pre';
-    const BUFFER_PARSE_OFFERS     = 'buffer.parse.offers';
-    const BUFFER_PARSE_OFFERS_END = 'buffer.parse.offers.end';
+    /**
+     * @var mixed
+     */
+    protected $filename;
 
-    const EXECUTE_DUMP = 'execute.dump';
+    /**
+     * @param $data
+     */
+    public function __construct($filename)
+    {
+        $this->setData($filename);
+    }
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->filename;
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    public function setData($value)
+    {
+        $this->filename = $value;
+    }
 }

@@ -17,6 +17,7 @@
  */
 namespace iMega\Teleport;
 
+use iMega\Teleport\Events\DumpEvent;
 use iMega\Teleport\Parser;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
@@ -31,7 +32,7 @@ class MainController implements ControllerProviderInterface
     /**
      * Returns routes to connect to the given controller.
      *
-     * @param Application $app Application.
+     * @param Application $app
      *
      * @return \Silex\ControllerCollection
      */
@@ -51,7 +52,8 @@ class MainController implements ControllerProviderInterface
     /**
      * Accept files
      *
-     * @param Request $request
+     * @param Application $app
+     * @param Request     $request
      *
      * @return bool
      */
@@ -60,7 +62,9 @@ class MainController implements ControllerProviderInterface
         $data = json_decode($request->getContent(), true);
         $path = sprintf('%s/%s/%s', $data['url'], $data['uripath'], $data['uuid']);
         $app['service.acceptfile']->downloads($path, $data['files']);
-
+        /*$app['teleport.cloud']->status('/storage/status', [
+            'file' => $file,
+        ]);*/
         return new Response('', Response::HTTP_OK);
     }
 
@@ -76,6 +80,12 @@ class MainController implements ControllerProviderInterface
     {
         $data = json_decode($request->getContent(), true);
 
+        /**
+         * @var \Closure $progress
+         */
+        $progress = $app['progress'];
+        $progress($data['progress']);
+
         return new Response('', Response::HTTP_OK);
     }
 
@@ -89,6 +99,8 @@ class MainController implements ControllerProviderInterface
     public function import(Application $app, Request $request)
     {
         $data = json_decode($request->getContent(), true);
+
+        $app['dispatcher']->dispatch(Events::EXECUTE_DUMP, new DumpEvent($data['file']));
 
         return new Response('', Response::HTTP_OK);
     }

@@ -47,7 +47,7 @@ class iMegaTeleport
         $appConfig = require_once __DIR__ . '/../../config/app.php';
         $app = new Application(array_merge_recursive($appConfig, $options));
         $this->app = $app;
-
+        $app['uuid'] = $cms->getLogin();
         $app['debug'] = true;
         $app['dispatcher']->addSubscriber(new RequestSubscriber($app));
         foreach ($cms->subscribers($app) as $subscriber) {
@@ -67,6 +67,12 @@ class iMegaTeleport
                 );
             };
         });
+
+        $app['progress'] = function () use ($cms) {
+            function($value) use ($cms) {
+                return $cms->progress($value);
+            };
+        };
 
         $app->register(new \Silex\Provider\ServiceControllerServiceProvider());
         foreach ($app['mount'] as $prefix => $controller) {

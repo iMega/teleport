@@ -26,9 +26,14 @@ return [
     'mapper' => function (Application $app) {
         return new iMega\Teleport\Mapper\Mysqlnd($app['db.options']);
     },
-    'teleport.cloud.options' => [
-        'base_uri' => 'http://teleport.imega.club',
-    ],
+    'teleport.cloud.options' => function (Application $app) {
+        return [
+            'base_uri' => 'http://teleport.imega.club',
+            'headers' => [
+                'X-Teleport-uuid' => $app['uuid'],
+            ],
+        ];
+    },
     'service.acceptfile' => function (Application $app) {
         return new \iMega\Teleport\Service\AcceptFileService($app['teleport.cloud'], $app['storage']);
     },

@@ -37,11 +37,17 @@ class ApiCloud
             'base_uri' => 'http://127.0.0.1:80',
             'http_errors' => false
         ), $options);
-var_dump($options);
+
         $this->client = $client ?: new GuzzleClient($options);
         $this->logger = $logger ?: new NullLogger();
     }
 
+    /**
+     * Регистрация плагина
+     *
+     * @param string $login Идентификатор учетной записи
+     * @param string $url   Адрес сайта
+     */
     public function registered($login, $url)
     {
         $data = [
@@ -52,9 +58,67 @@ var_dump($options);
         //var_dump($response->getBody()->__toString());
     }
 
+    /**
+     * Загрузить файл
+     *
+     * @param null|string $url
+     * @param array       $options
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
     public function download($url = null, array $options = [])
     {
         return $this->send($this->buildRequest('GET', $url, $options), $options);
+    }
+
+    /**
+     * Загрузка файла завершена
+     *
+     * @param array $data
+     */
+    public function downloadFileComplete(array $data = [])
+    {
+        $this->send($this->buildRequest('POST', '/storage/status-file'), ['json' => $data]);
+    }
+
+    /**
+     * Отправить статус о завершении загрузок
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function downloadComplete()
+    {
+        return $this->send($this->buildRequest('POST', '/storage/download-complete'));
+    }
+
+    /**
+     * Отправить статус о завершении импорта
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function importComplete()
+    {
+        return $this->send($this->buildRequest('POST', '/'));
+    }
+
+    /**
+     * Отправить журнал
+     *
+     * @param array $log
+     */
+    public function reportLog(array $log = [])
+    {
+        $this->send($this->buildRequest('POST', '/'), ['json' => $log]);
+    }
+
+    /**
+     * Отправить настройки
+     *
+     * @param array $data
+     */
+    public function settings(array $data = [])
+    {
+        $this->send($this->buildRequest('POST', '/'), ['json' => $data]);
     }
 
     private function send(RequestInterface $request, array $options = [])
@@ -111,7 +175,7 @@ var_dump($options);
      */
     private function buildRequest($method, $url, array $options = [])
     {
-        $uri = new Uri($url);
+        $uri     = new Uri($url);
         $request = new Request($method, $uri);
         foreach ($options as $key => $optValue) {
             switch ($key) {
@@ -132,6 +196,7 @@ var_dump($options);
                     break;
             }
         }
+
         return $request;
     }
 }

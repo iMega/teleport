@@ -8,27 +8,43 @@ class AcceptFileService
      * @var \iMega\Teleport\Cloud\ApiCloud $client
      */
     protected $cloud;
-    protected $storage;
-    protected $files;
+    //protected $storage;
+    //protected $files;
 
     public function __construct($cloud, $storage)
     {
-        $this->cloud   = $cloud;
-        $this->storage = $storage;
+        $this->cloud = $cloud;
+        //$this->storage = $storage;
     }
 
-    public function downloads($path, array $files)
+    /**
+     * Загрузить файлы
+     *
+     * @param string $uriPath Путь к файлам
+     * @param array  $files   Список файлов
+     */
+    public function downloads($uriPath, array $files)
     {
         foreach ($files as $item) {
-            $this->download($path, $item);
+            $this->download($uriPath, $item);
         }
+        $this->cloud->downloadComplete();
     }
 
-    private function download($path, array $item)
+    /**
+     * Загрузить файл
+     *
+     * @param string $uriPath Путь к файлам
+     * @param array  $item    Файл с хешем
+     */
+    private function download($uriPath, array $item)
     {
         foreach ($item as $file => $hash) {
             $resource = fopen('gaufrette://teleport' . $file, 'w+');
-            $this->cloud->download($path.$file, ['sink' => $resource]);
+            $this->cloud->download($uriPath.$file, ['sink' => $resource]);
+            if ($hash == md5_file('gaufrette://teleport' . $file)) {
+                $this->cloud->downloadFileComplete(['file' => $file,]);
+            }
         }
     }
 }

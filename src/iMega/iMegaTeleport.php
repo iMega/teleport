@@ -89,7 +89,7 @@ class iMegaTeleport
 
     protected function registrationOnCloud(CmsInterface $cms)
     {
-        if (!$cms->isRegistered()) {
+        if ($cms->getLogin() && !$cms->isRegistered()) {
             $response = $this->app['teleport.cloud']->registered($cms->getLogin(), $cms->getUrl());
             $cms->setRegistered($response);
         }

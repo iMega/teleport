@@ -344,7 +344,7 @@ class Wordpress implements CmsInterface
     /**
      * Возвращает логин пользователя для телепорта
      *
-     * @return string
+     * @return false|string
      */
     protected function getUser()
     {

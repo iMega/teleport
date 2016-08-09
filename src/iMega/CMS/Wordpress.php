@@ -162,14 +162,22 @@ class Wordpress implements CmsInterface
         return get_option('siteurl');
     }
 
+    /**
+     * Check registration on teleport cloud
+     *
+     * @return bool
+     */
     public function isRegistered()
     {
-        return false;
+        return (bool) get_option('imegateleport-registered');
     }
 
-    public function setRegistered($response)
+    /**
+     * @param bool $value
+     */
+    public function setRegistered($value)
     {
-        //update_option('imegateleport-registered', $);
+        update_option('imegateleport-registered', $value);
     }
 
     /**

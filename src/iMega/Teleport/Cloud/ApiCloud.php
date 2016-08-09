@@ -26,6 +26,7 @@ use GuzzleHttp\Exception\TransferException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Symfony\Component\HttpFoundation\Response;
 
 class ApiCloud
 {
@@ -47,15 +48,17 @@ class ApiCloud
      *
      * @param string $login Идентификатор учетной записи
      * @param string $url   Адрес сайта
+     *
+     * @return bool
      */
     public function registered($login, $url)
     {
         $data = [
             'url' => $url,
         ];
-        //$response = $this->send($this->buildRequest('POST', '/activate/register-plugin' . $login), ['json' => $data]);
-        //$response = $this->client->post('/activate/register-plugin/' . $login, ['json' => $data]);
-        //var_dump($response->getBody()->__toString());
+        $response = $this->send($this->buildRequest('POST', '/activate/register-plugin/' . $login), ['json' => $data]);
+
+        return Response::HTTP_OK == $response->getStatusCode();
     }
 
     /**

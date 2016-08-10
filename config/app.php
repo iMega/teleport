@@ -28,7 +28,7 @@ return [
     },
     'teleport.cloud.options' => function (Application $app) {
         return [
-            'base_uri' => 'http://teleport.imega.club',
+            'base_uri' => 'http://a.imega.club',
             'headers' => [
                 'X-Teleport-uuid' => $app['uuid'],
             ],

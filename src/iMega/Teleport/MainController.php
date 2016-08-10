@@ -42,11 +42,22 @@ class MainController implements ControllerProviderInterface
          * @var \Silex\ControllerCollection $c
          */
         $c = $app['controllers_factory'];
+        $c->post("/", array($this, 'ping'))->bind('ping');
         $c->post("/accept-file", array($this, 'acceptFile'))->bind('acceptFile');
         $c->post("/progress", array($this, 'progress'))->bind('progress');
         $c->post("/import", array($this, 'import'))->bind('import');
 
         return $c;
+    }
+
+    /**
+     * Ping
+     *
+     * @return Response
+     */
+    public function ping()
+    {
+        return new Response('pong', Response::HTTP_OK);
     }
 
     /**

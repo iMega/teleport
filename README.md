@@ -65,4 +65,7 @@ iMegaTeleport выгружает данные о товаре: название,
 
 You needs docker and make.
 
-Quick start `make build test start` 
+Quick start `make build test start`
+
+`make help`
+

@@ -48,37 +48,34 @@ build/packages:
 
 
 build/composer:
-	@docker run --rm -v $(CURDIR):/data imega/composer:2.3.1 update --ignore-platform-reqs --no-interaction
+	@docker run --rm -v $(CURDIR):/data imega/composer update --ignore-platform-reqs --no-interaction
 	@touch $(CURDIR)/build/composer
 
 start:
-	@mkdir -p $(CURDIR)/build/storage
-
+	@mkdir -m 777 -p $(CURDIR)/build/storage
+	@touch $(CURDIR)/mysql.log
 	@docker run -d \
 		--name "teleport_db" \
+		-v $(CURDIR)/images/cnf:/etc/mysql/conf.d \
+		-v $(CURDIR)/mysql.log:/var/log/mysql/mysql.log \
 		$(MYSQL_PORTS) \
-		imega/mysql:1.0.0
-
-	@docker run --rm \
-		--link teleport_db:teleport_db \
-		imega/mysql-client:1.3.0 \
-		mysqladmin --silent --host=teleport_db --wait=5 ping
+		imega/mysql
 
 	@docker run --rm \
 		-v $(CURDIR)/images/teleport_db/sql:/sql \
 		--link teleport_db:teleport_db \
-		imega/mysql-client:1.3.0 \
+		imega/mysql-client \
 		mysql --host=teleport_db -e "source /sql/teleport.sql"
 
 	@docker run --rm \
 		--link teleport_db:teleport_db \
-		imega/mysql-client:1.3.0 \
+		imega/mysql-client \
 		mysql --host=teleport_db --database=teleport -e "update wp_options set option_value='http://$(BASEURL)' where option_id in (1,2);"
 
 	@docker run --rm \
 		-v $(CURDIR)/images/teleport_db/sql:/sql \
 		--link teleport_db:teleport_db \
-		imega/mysql-client:1.3.0 \
+		imega/mysql-client \
 		mysql --host=teleport_db --database=teleport -e "source /sql/teleport_enable.sql"
 
 	@docker run -d \

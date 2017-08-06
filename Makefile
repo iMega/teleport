@@ -55,7 +55,7 @@ start:
 	@mkdir -m 777 -p $(CURDIR)/build/storage
 	@touch $(CURDIR)/mysql.log
 	@docker run -d \
-		--name "teleport_db" \
+		--name "teleport_wp_db" \
 		-v $(CURDIR)/images/cnf:/etc/mysql/conf.d \
 		-v $(CURDIR)/mysql.log:/var/log/mysql/mysql.log \
 		$(MYSQL_PORTS) \
@@ -63,24 +63,24 @@ start:
 
 	@docker run --rm \
 		-v $(CURDIR)/images/teleport_db/sql:/sql \
-		--link teleport_db:teleport_db \
+		--link teleport_wp_db:teleport_db \
 		imega/mysql-client \
 		mysql --host=teleport_db -e "source /sql/teleport.sql"
 
 	@docker run --rm \
-		--link teleport_db:teleport_db \
+		--link teleport_wp_db:teleport_db \
 		imega/mysql-client \
 		mysql --host=teleport_db --database=teleport -e "update wp_options set option_value='http://$(BASEURL)' where option_id in (1,2);"
 
 	@docker run --rm \
 		-v $(CURDIR)/images/teleport_db/sql:/sql \
-		--link teleport_db:teleport_db \
+		--link teleport_wp_db:teleport_db \
 		imega/mysql-client \
 		mysql --host=teleport_db --database=teleport -e "source /sql/teleport_enable.sql"
 
 	@docker run -d \
 		--name "teleport" \
-		--link teleport_db:teleport_db \
+		--link teleport_wp_db:teleport_db \
 		-v $(CURDIR)/build/wordpress:/wordpress \
 		-v $(CURDIR)/build/storage:/storage \
 		-v $(CURDIR):/app \

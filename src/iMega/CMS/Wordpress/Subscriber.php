@@ -15,18 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace iMega\CMS\Subscriber;
+
+namespace iMega\CMS\Wordpress;
 
 use iMega\Teleport\MapperInterface;
-use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use iMega\Teleport\StorageInterface;
 use iMega\Teleport\Events;
 
-/**
- * Class WordpressSubscriber
- */
-class WordpressSubscriber implements EventSubscriberInterface
+class Subscriber implements EventSubscriberInterface
 {
     /**
      * @var MapperInterface
@@ -46,7 +43,7 @@ class WordpressSubscriber implements EventSubscriberInterface
     /**
      * @param MapperInterface  $mapper
      * @param StorageInterface $resources
-     * @param array            $replaces
+     * @param array            $patterns
      */
     public function __construct(MapperInterface $mapper, $resources, $patterns)
     {
@@ -63,55 +60,8 @@ class WordpressSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            Events::BUFFER_PARSE_START => ['parseStart', 200],
-            Events::BUFFER_PARSE_DUMP  => ['parseDump', 200],
-            Events::BUFFER_PARSE_END   => ['parseEnd', 200],
-            Events::EXECUTE_DUMP       => ['executeDump', 200],
+            Events::EXECUTE_DUMP => ['executeDump', 200],
         );
-    }
-
-    /**
-     * Event
-     */
-    public function parseStart()
-    {
-        $teleport = str_replace(
-            array_keys($this->patterns),
-            array_values($this->patterns),
-            $this->resources->read('teleport.sql')
-        );
-        $queries  = str_replace(
-            array_keys($this->patterns),
-            array_values($this->patterns),
-            $this->resources->read('tabs.sql')
-        );
-        $this->mapper->preExecute($teleport . $queries);
-    }
-
-    /**
-     * Event
-     */
-    public function parseDump()
-    {
-        $queries = str_replace(
-            array_keys($this->patterns),
-            array_values($this->patterns),
-            $this->resources->read('dump.sql')
-        );
-        $this->mapper->preExecute($queries);
-    }
-
-    /**
-     * Event
-     */
-    public function parseEnd()
-    {
-        $queries = str_replace(
-            array_keys($this->patterns),
-            array_values($this->patterns),
-            $this->resources->read('woocommerce.sql')
-        );
-        $this->mapper->postExecute($queries);
     }
 
     /**
@@ -120,11 +70,7 @@ class WordpressSubscriber implements EventSubscriberInterface
     public function executeDump(Events\DumpEvent $dumpEvent)
     {
         $filename = $dumpEvent->getData();
-        $queries = str_replace(
-            array_keys($this->patterns),
-            array_values($this->patterns),
-            $this->resources->read($filename)
-        );
+        $queries  = str_replace(array_keys($this->patterns), array_values($this->patterns), $this->resources->read($filename));
         $this->mapper->postExecute($queries);
     }
 }

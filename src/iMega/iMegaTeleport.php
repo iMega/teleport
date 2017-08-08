@@ -23,9 +23,6 @@ use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use iMega\Teleport\Subscriber\RequestSubscriber;
 
-/**
- * Class iMegaTeleport
- */
 class iMegaTeleport
 {
     /**
@@ -69,7 +66,7 @@ class iMegaTeleport
         });
 
         $app['progress'] = function () use ($cms) {
-            function($value) use ($cms) {
+            return function($value = null) use ($cms) {
                 return $cms->progress($value);
             };
         };

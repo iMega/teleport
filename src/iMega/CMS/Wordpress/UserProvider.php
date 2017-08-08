@@ -1,6 +1,6 @@
 <?php
 
-namespace iMega\CMS\Security\User\Provider;
+namespace iMega\CMS\Wordpress;
 
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\User;
@@ -8,10 +8,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
-/**
- * Class WordpressUserProvider
- */
-class WordpressUserProvider implements UserProviderInterface
+class UserProvider implements UserProviderInterface
 {
     /**
      * @param string $username

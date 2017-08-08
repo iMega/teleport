@@ -1,4 +1,20 @@
 <?php
+/**
+ * Copyright (C) 2014 iMega ltd Dmitry Gavriloff (email: info@imega.ru),
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 namespace iMega\Teleport\Service;
 
@@ -8,25 +24,21 @@ class AcceptFileService
      * @var \iMega\Teleport\Cloud\ApiCloud $client
      */
     protected $cloud;
-    //protected $storage;
-    //protected $files;
 
-    public function __construct($cloud, $storage)
+    public function __construct($cloud)
     {
         $this->cloud = $cloud;
-        //$this->storage = $storage;
     }
 
     /**
      * Загрузить файлы
      *
-     * @param string $uriPath Путь к файлам
-     * @param array  $files   Список файлов
+     * @param array $files Список файлов
      */
-    public function downloads($uriPath, array $files)
+    public function downloads(array $files)
     {
         foreach ($files as $item) {
-            $this->download($uriPath, $item);
+            $this->download($item['url'], $item['hash']);
         }
         $this->cloud->downloadComplete();
     }
@@ -34,17 +46,16 @@ class AcceptFileService
     /**
      * Загрузить файл
      *
-     * @param string $uriPath Путь к файлам
-     * @param array  $item    Файл с хешем
+     * @param string $url
+     * @param string $hash
      */
-    private function download($uriPath, array $item)
+    public function download($url, $hash)
     {
-        foreach ($item as $file => $hash) {
-            $resource = fopen('gaufrette://teleport' . $file, 'w+');
-            $this->cloud->download($uriPath.$file, ['sink' => $resource]);
-            if ($hash == md5_file('gaufrette://teleport' . $file)) {
-                $this->cloud->downloadFileComplete(['file' => $file,]);
-            }
+        $file     = basename($url);
+        $resource = fopen('teleport://storage/' . $file, 'w+');
+        $this->cloud->download($url, ['sink' => $resource]);
+        if ($hash == md5_file('teleport://storage/' . $file)) {
+            $this->cloud->downloadFileComplete(['file' => $file]);
         }
     }
 }

@@ -14,20 +14,20 @@
   },
   "require": {
     "php": ">=5.5.9",
-    "silex/silex": "2.0.*@dev",
+    "silex/silex": "v2.2.0",
     "iMega/WalkerXML": "1.3.1",
-    "symfony/security": "v2.7.1",
-    "knplabs/gaufrette": "0.2.1",
-    "guzzlehttp/guzzle": ">=4.1.4 <7.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "4.7.5",
-    "phpunit/dbunit": "1.4.0"
+    "symfony/security": "v3.3.6",
+    "knplabs/gaufrette": "v0.4.0",
+    "guzzlehttp/guzzle": "6.3.0"
   },
   "repositories":[
     {
       "type":"git",
       "url":"https://github.com/iMega/WalkerXML.git"
     }
-  ]
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "5.7.21",
+    "phpunit/dbunit": "1.4.1"
+  }
 }

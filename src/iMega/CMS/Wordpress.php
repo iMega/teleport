@@ -17,8 +17,8 @@
  */
 namespace iMega\CMS;
 
-use iMega\CMS\Security\User\Provider\WordpressUserProvider;
-use iMega\CMS\Subscriber\WordpressSubscriber;
+use iMega\CMS\Wordpress\UserProvider;
+use iMega\CMS\Wordpress\Subscriber;
 use Silex\Application;
 use iMega\Teleport\MapperInterface;
 
@@ -55,7 +55,7 @@ class Wordpress implements CmsInterface
      */
     public function authProvider()
     {
-        return '\iMega\CMS\Authentication\Provider\WordpressAuthProvider';
+        return \iMega\CMS\Wordpress\AuthProvider::class;
     }
 
     /**
@@ -71,7 +71,7 @@ class Wordpress implements CmsInterface
                     'pattern' => '^.*$',
                     'http' => true,
                     'users' => function () {
-                        return new WordpressUserProvider();
+                        return new UserProvider();
                     },
                 ),
             ),
@@ -142,7 +142,7 @@ class Wordpress implements CmsInterface
     public function subscribers(Application $app)
     {
         return [
-            new WordpressSubscriber($app['mapper'], $app['storage'], $this->getPatterns($app)),
+            new Subscriber($app['mapper'], $app['storage'], $this->getPatterns($app)),
         ];
     }
 

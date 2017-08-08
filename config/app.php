@@ -16,8 +16,8 @@ return [
     'storage' => function (Application $app) {
         $fs = new Gaufrette\Filesystem($app['storage.adapter']);
         $filesystemMap = Gaufrette\StreamWrapper::getFilesystemMap();
-        $filesystemMap->set('teleport', $fs);
-        Gaufrette\StreamWrapper::register();
+        $filesystemMap->set('storage', $fs);
+        Gaufrette\StreamWrapper::register('teleport');
         return $fs;
     },
     'buffer' => function () {
@@ -27,14 +27,16 @@ return [
         return new iMega\Teleport\Mapper\Mysqlnd($app['db.options']);
     },
     'teleport.cloud.options' => function (Application $app) {
+        $cdn = ['http://a.imega.club', 'http://a.imega.ru'];
+        $idx = array_rand($cdn);
         return [
-            'base_uri' => 'http://a.imega.club',
+            'base_uri' => $cdn[$idx],
             'headers' => [
                 'X-Teleport-uuid' => $app['uuid'],
             ],
         ];
     },
     'service.acceptfile' => function (Application $app) {
-        return new \iMega\Teleport\Service\AcceptFileService($app['teleport.cloud'], $app['storage']);
+        return new \iMega\Teleport\Service\AcceptFileService($app['teleport.cloud']);
     },
 ];

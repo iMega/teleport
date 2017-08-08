@@ -30,7 +30,7 @@ help:
 quick: build test start
 
 build: build/packages build/composer
-#	@docker build -f "teleport-test.docker" -t imega/teleport-test .
+	@docker build -f "teleport-test.docker" -t imega/teleport-test .
 	@docker build -t imega/teleport .
 
 build/packages:
@@ -49,7 +49,6 @@ build/packages:
 
 build/composer:
 	@docker run --rm -v $(CURDIR):/data imega/composer update --ignore-platform-reqs --no-interaction
-	@touch $(CURDIR)/build/composer
 
 start:
 	@mkdir -m 777 -p $(CURDIR)/build/storage
@@ -122,7 +121,7 @@ test:
 		--env="DB_HOST=$(DBHOST)" \
 		--env="BASE_URL=$(BASEURL)" \
 		--memory="300M" \
-		imega/teleport-test vendor/bin/phpunit tests/iMega/Teleport/Mapper/Mysqlnd205Test.php
+		imega/teleport-test vendor/bin/phpunit tests/iMega/Teleport/Service/AcceptFileServiceTest.php
 
 destroy: clean
 	-docker rmi -f $(IMAGES)

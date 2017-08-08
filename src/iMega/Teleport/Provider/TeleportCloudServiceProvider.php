@@ -34,6 +34,11 @@ class TeleportCloudServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $app)
     {
+        /**
+         * @param Container $app
+         *
+         * @return ApiCloud
+         */
         $app['teleport.cloud'] = function ($app) {
             $guzzleClient = null;
             $logger = null;

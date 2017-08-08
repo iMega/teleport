@@ -18,11 +18,11 @@
 namespace iMega\Teleport;
 
 use iMega\Teleport\Events\DumpEvent;
-use iMega\Teleport\Parser;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use iMega\Teleport\Service\AcceptFileService;
 
 /**
  * Class Controller
@@ -66,26 +66,27 @@ class MainController implements ControllerProviderInterface
      * @param Application $app
      * @param Request     $request
      *
-     * @return bool
+     * @return Response
      */
     public function acceptFile(Application $app, Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        $path = sprintf('%s/%s/%s', $data['url'], $data['uripath'], $data['uuid']);
-        $app['service.acceptfile']->downloads($path, $data['files']);
-        /*$app['teleport.cloud']->status('/storage/status', [
-            'file' => $file,
-        ]);*/
+        /**
+         * @var AcceptFileService $service
+         */
+        $service = $app['service.acceptfile'];
+        $service->downloads($data);
+
         return new Response('', Response::HTTP_OK);
     }
-
 
     /**
      * Write progress
      *
-     * @param Request $request
+     * @param Application $app
+     * @param Request     $request
      *
-     * @return bool
+     * @return Response
      */
     public function progress(Application $app, Request $request)
     {
@@ -94,7 +95,7 @@ class MainController implements ControllerProviderInterface
         /**
          * @var \Closure $progress
          */
-        $progress = $app['progress'];
+        $progress = $app->offsetGet('progress');
         $progress($data['progress']);
 
         return new Response('', Response::HTTP_OK);
@@ -103,7 +104,8 @@ class MainController implements ControllerProviderInterface
     /**
      * Import data
      *
-     * @param Request $request
+     * @param Application $app
+     * @param Request     $request
      *
      * @return Response
      */

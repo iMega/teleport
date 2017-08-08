@@ -1,7 +1,6 @@
 <?php
 
-
-namespace iMega\CMS\Authentication\Provider;
+namespace iMega\CMS\Wordpress;
 
 use Symfony\Component\Security\Core\Authentication\Provider\UserAuthenticationProvider;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
@@ -17,7 +16,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  * WordpressAuthenticationProvider uses a UserProviderInterface to retrieve the user
  * for a UsernamePasswordToken.
  */
-class WordpressAuthProvider extends UserAuthenticationProvider
+class AuthProvider extends UserAuthenticationProvider
 {
     private $encoderFactory;
     private $userProvider;

@@ -38,9 +38,11 @@ class AcceptFileService
     public function downloads(array $files)
     {
         foreach ($files as $item) {
-            $this->download($item['url'], $item['hash']);
+            $ret = $this->download($item['url'], $item['hash']);
+            if (false === $ret) {
+                throw new \RuntimeException('Неудалось загрузить файл ' . $item['url']);
+            }
         }
-        $this->cloud->downloadComplete();
     }
 
     /**
@@ -48,14 +50,15 @@ class AcceptFileService
      *
      * @param string $url
      * @param string $hash
+     *
+     * @return bool
      */
     public function download($url, $hash)
     {
         $file     = basename($url);
         $resource = fopen('teleport://storage/' . $file, 'w+');
         $this->cloud->download($url, ['sink' => $resource]);
-        if ($hash == md5_file('teleport://storage/' . $file)) {
-            $this->cloud->downloadFileComplete(['file' => $file]);
-        }
+
+        return $hash == md5_file('teleport://storage/' . $file);
     }
 }

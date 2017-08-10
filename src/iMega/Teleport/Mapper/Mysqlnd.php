@@ -68,6 +68,7 @@ class Mysqlnd extends \mysqli implements MapperInterface
     {
         $tablename = $this->prefix . Map::getTables()[$key];
         $fields    = implode(',', Map::getMap()[$key]);
+
         return "insert into $tablename($fields)values";
     }
 
@@ -96,7 +97,7 @@ class Mysqlnd extends \mysqli implements MapperInterface
      */
     private function getValue($key, $value)
     {
-        $data = [];
+        $data   = [];
         $record = json_decode($value, true);
         foreach (Map::getMap()[$key] as $field) {
             if (array_key_exists($field, $record)) {
@@ -126,11 +127,11 @@ class Mysqlnd extends \mysqli implements MapperInterface
     /**
      * Connect to db
      *
-     * @param string   $host
-     * @param string   $user
-     * @param string   $pass
-     * @param string   $db
-     * @param int|null $port
+     * @param string      $host
+     * @param string      $user
+     * @param string      $pass
+     * @param string      $db
+     * @param int|null    $port
      * @param string|null $socket
      */
     private function open($host, $user, $pass, $db, $port = null, $socket = null)
@@ -142,13 +143,13 @@ class Mysqlnd extends \mysqli implements MapperInterface
     /**
      * Run Query
      *
-     * @param string $statement SQL statement
-     * @param int    $type      Result Mode MYSQLI_USE_RESULT or MYSQLI_STORE_RESULT
+     * @param string $queries SQL statement
+     * @param int    $resultmode
      *
-     * @throws MySQLiException
      * @return \mysqli_result
+     * @throws MySQLiException
      */
-    public function query($queries)
+    public function query($queries, $resultmode = MYSQLI_STORE_RESULT)
     {
         $result = $this::multi_query($queries);
         while ($this->more_results() && $this->next_result()) {
@@ -157,7 +158,7 @@ class Mysqlnd extends \mysqli implements MapperInterface
                 $mysqliResult->free();
             }
         }
-        if (! empty($this->error)) {
+        if (!empty($this->error)) {
             throw new MySQLiException('Error: ' . $this->error . "\r\n\t" . 'Statement: ', $this->errno);
         }
 

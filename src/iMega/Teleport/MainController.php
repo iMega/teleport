@@ -15,8 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace iMega\Teleport;
 
+use iMega\Teleport\Cloud\ApiCloud;
 use iMega\Teleport\Events\DumpEvent;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
@@ -75,7 +77,26 @@ class MainController implements ControllerProviderInterface
          * @var AcceptFileService $service
          */
         $service = $app['service.acceptfile'];
-        $service->downloads($data);
+        try {
+            $service->downloads($data);
+        } catch (\Exception $e) {
+            return new Response(json_encode(['msg' => $e->getMessage()]), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        /**
+         * @var ApiCloud $cloud
+         */
+        $cloud = $app['teleport.cloud'];
+        try {
+            $cloud->downloadComplete();
+        } catch (\Exception $e) {
+            return new Response(json_encode(['msg' => $e->getMessage()]), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        foreach ($data as $item) {
+            $file = basename($item['url']);
+            $app['dispatcher']->dispatch(Events::EXECUTE_DUMP, new DumpEvent($file));
+        }
 
         return new Response('', Response::HTTP_OK);
     }

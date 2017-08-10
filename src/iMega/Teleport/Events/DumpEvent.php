@@ -19,9 +19,6 @@ namespace iMega\Teleport\Events;
 
 use Symfony\Component\EventDispatcher\Event;
 
-/**
- * Class DumpEvent
- */
 class DumpEvent extends Event
 {
     /**
@@ -30,7 +27,7 @@ class DumpEvent extends Event
     protected $filename;
 
     /**
-     * @param $data
+     * @param string $filename
      */
     public function __construct($filename)
     {
@@ -38,7 +35,7 @@ class DumpEvent extends Event
     }
 
     /**
-     * @return array
+     * @return string
      */
     public function getData()
     {
@@ -46,8 +43,7 @@ class DumpEvent extends Event
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param string $value
      */
     public function setData($value)
     {

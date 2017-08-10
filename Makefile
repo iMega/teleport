@@ -5,6 +5,7 @@ PORT = -p 127.0.0.1:80:80
 BASEURL = localhost
 MYSQL_PORTS =
 BUILD = $(CURDIR)/build
+COMPOSER_FLAGS = --no-dev --optimize-autoloader --ignore-platform-reqs --no-interaction
 
 help:
 	@echo "USAGE: make COMMAND [OPTIONS]\n\n" \
@@ -29,7 +30,7 @@ help:
 
 quick: build test start
 
-build: build/packages build/composer
+build: build/packages composer
 	@docker build -f "teleport-test.docker" -t imega/teleport-test .
 	@docker build -t imega/teleport .
 
@@ -47,8 +48,8 @@ build/packages:
 	@touch $(CURDIR)/build/packages
 
 
-build/composer:
-	@docker run --rm -v $(CURDIR):/data imega/composer update --ignore-platform-reqs --no-interaction
+composer:
+	@docker run --rm -v $(CURDIR):/data imega/composer update $(COMPOSER_FLAGS)
 
 start:
 	@mkdir -m 777 -p $(CURDIR)/build/storage
@@ -115,13 +116,15 @@ clean: stop
 	@rm -rf $(CURDIR)/build/storage
 	-docker rm -fv $(CONTAINERS)
 
+test: COMPOSER_FLAGS = --optimize-autoloader --ignore-platform-reqs --no-interaction
 test:
 	@docker run --rm \
 		-v $(CURDIR):/data \
+		-w /data \
 		--env="DB_HOST=$(DBHOST)" \
 		--env="BASE_URL=$(BASEURL)" \
 		--memory="300M" \
-		imega/teleport-test vendor/bin/phpunit tests/iMega/Teleport/Service/AcceptFileServiceTest.php
+		imega/teleport-test vendor/bin/phpunit tests/iMega/Teleport/MainControllerTest.php
 
 destroy: clean
 	-docker rmi -f $(IMAGES)

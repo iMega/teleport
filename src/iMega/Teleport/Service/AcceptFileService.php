@@ -38,7 +38,7 @@ class AcceptFileService
     public function downloads(array $files)
     {
         foreach ($files as $item) {
-            $ret = $this->download($item['url'], $item['hash']);
+            $ret = $this->download($item['url'], $item['sum']);
             if (false === $ret) {
                 throw new \RuntimeException('Неудалось загрузить файл ' . $item['url']);
             }

@@ -711,7 +711,8 @@ LOCK TABLES `wp_users` WRITE;
 
 INSERT INTO `wp_users` (`ID`, `user_login`, `user_pass`, `user_nicename`, `user_email`, `user_url`, `user_registered`, `user_activation_key`, `user_status`, `display_name`)
 VALUES
-	(1,'demo','$P$BRqiEwpinxVhXOOeD9bZ.3PBULLdwI.','demo','info@imega.ru','','2015-06-12 15:21:10','',0,'demo');
+	(1,'demo','$P$BRqiEwpinxVhXOOeD9bZ.3PBULLdwI.','demo','info@imega.ru','','2015-06-12 15:21:10','',0,'demo'),
+    (2,'abd38f1d-be94-4f2f-cf1d-e809dbac3157','$P$ByXxTfWRqnmBIiTaW/QjPR87U.I8lP1','abd38f1d-be94-4f2f-cf1d-e809dbac3157','indo@sdf.ru','','2017-10-14 12:47:14','',0,'abd38f1d-be94-4f2f-cf1d-e809dbac3157');
 
 /*!40000 ALTER TABLE `wp_users` ENABLE KEYS */;
 UNLOCK TABLES;
